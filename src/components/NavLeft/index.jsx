@@ -1,5 +1,6 @@
 import React from 'react';
+import './NavLeft.css';
 
-const NavLeft = () => <div>This is the NavLeft component</div>;
+const NavLeft = () => <div className="navLeft">This is the NavLeft component</div>;
 
 export default NavLeft;

@@ -1,0 +1,5 @@
+.navRight {
+	grid-area: navRight;
+	background-color: #455a64;
+	word-wrap: break-word;
+}
