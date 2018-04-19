@@ -1,4 +1,4 @@
-Ticket: https://github.com/Carglass/viz/projects/1#card-XXXXXXX
+Ticket: https://github.com/Carglass/viz/projects/1#card-XXXXXXX <br>
 Linked PRs: (links to corresponding PRs, optional)
 
 ## Changes
