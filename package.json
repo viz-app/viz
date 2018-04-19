@@ -33,6 +33,10 @@
 		"useTabs": true
 	},
 	"lint-staged": {
-		"*.{js,jsx}": ["prettier --write", "eslint --fix", "git add"]
+		"*.{js,jsx}": [
+			"prettier --write",
+			"eslint --fix",
+			"git add"
+		]
 	}
 }
