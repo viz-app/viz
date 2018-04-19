@@ -12,9 +12,14 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "prettier": "./node_modules/.bin/prettier --single-quote --print-width=100 --use-tabs --write \"**/*.{js,jsx}\""
+    "prettier": "./node_modules/.bin/prettier --write \"**/*.{js,jsx}\""
   },
   "devDependencies": {
     "prettier": "^1.12.1"
+  },
+  "prettier":{
+    "printWidth": 100,
+    "singleQuote": true,
+    "useTabs": true
   }
 }
