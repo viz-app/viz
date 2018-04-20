@@ -8,7 +8,13 @@ let win;
 
 const openFileOrFolder = () => {
 	// opening file dialog
-	const uri = dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] });
+	const uri = dialog.showOpenDialog({
+		properties: ['openFile', 'openDirectory'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png', 'gif'] },
+			{ name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] }
+		]
+	});
 
 	// sending to renderer process
 	win.webContents.send('fileSelectedByUser', uri);
