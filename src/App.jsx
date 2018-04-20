@@ -25,19 +25,18 @@ class App extends React.Component {
 		ipcRenderer.on('fileSelectedByUser', (event, arg) => {
 			// prints whatever file has been selected by the user
 			console.log(`file selected by user ${JSON.stringify(arg)}`);
+			this.setState({ fileInfo: arg });
 			// TODO actually set the state / context, load the image,etc.
 		});
 		ipcRenderer.on('leftKeyPressed', (event, arg) => {
 			console.log(`Left key pressed ${arg}`);
 			this.decrIndex();
 			console.log(this.state.fileInfo.currentFileIndex);
-			// TODO actually change the state
 		});
 		ipcRenderer.on('rightKeyPressed', (event, arg) => {
 			console.log(`Right key pressed ${arg}`);
 			this.incrIndex();
 			console.log(this.state.fileInfo.currentFileIndex);
-			// TODO actually change the state
 		});
 
 		this.incrIndex = this.incrIndex.bind(this);

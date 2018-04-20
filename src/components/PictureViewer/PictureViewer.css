@@ -2,3 +2,7 @@
 	grid-area: pictureViewer;
 	background-color: #1c313a;
 }
+
+.pictureViewer img{
+    width: 100%;
+}
