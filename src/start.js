@@ -1,4 +1,7 @@
 const { app, BrowserWindow, globalShortcut, dialog, ipcMain } = require('electron');
+const fs = require('fs');
+const path = require('path');
+
 // const path = require('path');
 // const url = require('url');
 
@@ -8,7 +11,7 @@ let win;
 
 const openFileOrFolder = () => {
 	// opening file dialog
-	const uri = dialog.showOpenDialog({
+	const uris = dialog.showOpenDialog({
 		properties: ['openFile', 'openDirectory'],
 		filters: [
 			{ name: 'Images', extensions: ['jpg', 'png', 'gif'] },
@@ -16,18 +19,39 @@ const openFileOrFolder = () => {
 		]
 	});
 
-	// sending to renderer process
-	/*
-	TODO
-		{
-			folder: '/Users/Max',
+	// if the user cancels, uri will be undefined
+	if (uris) {
+		const uri = uris[0];
+
+		// preparing our JSON object
+		/*
+			TODO
+			{
+				folder: '/Users/Max',
+				currentFileIndex: 0,
+				filesInFolder: ['dog.jpeg', 'cat.png']
+			}
+		*/
+		// the folder of the file selected by the user
+		// if the user selected a folder it will just return the same value
+		const folder = path.dirname(uri);
+
+		// defaulting to first picture of the folder
+		const payload = {
 			currentFileIndex: 0,
-			filesInFolder: ['dog.jpeg', 'cat.png']
+			folder,
+			filesInFolder: fs.readdirSync(folder)
+		};
+
+		// if the user selected a file instead of a folder, we update the index
+		const stats = fs.lstatSync(uri);
+		if (stats.isFile()) {
+			payload.currentFileIndex = payload.filesInFolder.indexOf(path.basename(uri));
 		}
-	*/
-	win.webContents.send('fileSelectedByUser', {
-		uri
-	});
+
+		// sending to renderer process
+		win.webContents.send('fileSelectedByUser', payload);
+	}
 };
 
 function createWindow() {
