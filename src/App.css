@@ -1,7 +1,7 @@
 .App {
 	display: grid;
 	grid-template-columns: 40px auto 40px;
-	grid-template-rows: 3fr 1fr;
+	grid-template-rows: auto 150px;
 	grid-template-areas:
 		'navLeft pictureViewer navRight'
 		'navLeft slider navRight';
