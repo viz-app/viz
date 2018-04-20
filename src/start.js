@@ -17,7 +17,17 @@ const openFileOrFolder = () => {
 	});
 
 	// sending to renderer process
-	win.webContents.send('fileSelectedByUser', uri);
+	/*
+	TODO
+		{
+			folder: '/Users/Max',
+			currentFileIndex: 0,
+			filesInFolder: ['dog.jpeg', 'cat.png']
+		}
+	*/
+	win.webContents.send('fileSelectedByUser', {
+		uri
+	});
 };
 
 function createWindow() {
