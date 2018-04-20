@@ -18,6 +18,14 @@ class App extends React.Component {
 			console.log(`file selected by user ${JSON.stringify(arg)}`);
 			// TODO actually set the state / context, load the image,etc.
 		});
+		ipcRenderer.on('leftKeyPressed', (event, arg) => {
+			console.log(`Left key pressed ${arg}`);
+			// TODO actually change the state
+		});
+		ipcRenderer.on('rightKeyPressed', (event, arg) => {
+			console.log(`Right key pressed ${arg}`);
+			// TODO actually change the state
+		});
 	}
 
 	openFileOrFolder = () => {

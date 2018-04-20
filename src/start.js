@@ -81,6 +81,16 @@ function createWindow() {
 	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
 	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
 
+	// Register shortcut listeners for left and right arrow
+	globalShortcut.register('Left', () => {
+		// sending to renderer process
+		win.webContents.send('leftKeyPressed');
+	});
+	globalShortcut.register('Right', () => {
+		// sending to renderer process
+		win.webContents.send('rightKeyPressed');
+	});
+
 	// the "open file or folder" dialog can also be triggered from the React app
 	ipcMain.on('openFileOrFolder', openFileOrFolder);
 }
