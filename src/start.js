@@ -1,10 +1,18 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, globalShortcut, dialog } = require('electron');
 // const path = require('path');
 // const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+
+const openFileOrFolder = () => {
+	// opening file dialog
+	const uri = dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] });
+
+	// sending to renderer process
+	win.webContents.send('fileSelectedByUser', uri);
+};
 
 function createWindow() {
 	// Create the browser window.
@@ -23,6 +31,9 @@ function createWindow() {
 		// when you should delete the corresponding element.
 		win = null;
 	});
+
+	// Register a 'CommandOrControl+O' shortcut listener.
+	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
 }
 
 // This method will be called when Electron has finished
