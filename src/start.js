@@ -1,4 +1,7 @@
 const { app, BrowserWindow, globalShortcut, dialog, ipcMain } = require('electron');
+const fs = require('fs');
+const path = require('path');
+
 // const path = require('path');
 // const url = require('url');
 
@@ -6,33 +9,60 @@ const { app, BrowserWindow, globalShortcut, dialog, ipcMain } = require('electro
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 
+const imageExtensions = ['jpg', 'png', 'gif'];
+// const videoExtensions = ['mkv', 'avi', 'mp4'];
+
 const openFileOrFolder = () => {
 	// opening file dialog
-	const uri = dialog.showOpenDialog({
+	const uris = dialog.showOpenDialog({
 		properties: ['openFile', 'openDirectory'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg', 'png', 'gif'] },
-			{ name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] }
+			{ name: 'Images', extensions: imageExtensions }
+			// { name: 'Movies', extensions: videoExtensions }
 		]
 	});
 
-	// sending to renderer process
-	/*
-	TODO
-		{
-			folder: '/Users/Max',
+	// if the user cancels, uri will be undefined
+	if (uris) {
+		const uri = uris[0];
+
+		// preparing our JSON object
+		/*
+			TODO
+			{
+				folder: '/Users/Max',
+				currentFileIndex: 0,
+				filesInFolder: ['dog.jpeg', 'cat.png']
+			}
+		*/
+		// the folder of the file selected by the user
+		// if the user selected a folder it will just return the same value
+		const folder = path.dirname(uri);
+
+		// defaulting to first picture of the folder
+		const payload = {
 			currentFileIndex: 0,
-			filesInFolder: ['dog.jpeg', 'cat.png']
+			folder,
+			filesInFolder: fs.readdirSync(folder).filter(image => {
+				const imageExtension = path.extname(image).replace('.', '');
+				return imageExtensions.indexOf(imageExtension) !== -1;
+			})
+		};
+
+		// if the user selected a file instead of a folder, we update the index
+		const stats = fs.lstatSync(uri);
+		if (stats.isFile()) {
+			payload.currentFileIndex = payload.filesInFolder.indexOf(path.basename(uri));
 		}
-	*/
-	win.webContents.send('fileSelectedByUser', {
-		uri
-	});
+
+		// sending to renderer process
+		win.webContents.send('fileSelectedByUser', payload);
+	}
 };
 
 function createWindow() {
 	// Create the browser window.
-	win = new BrowserWindow({ width: 800, height: 600 });
+	win = new BrowserWindow({ width: 1000, height: 768 });
 
 	// and load the index.html of the app.
 	win.loadURL('http://localhost:3000');
@@ -50,6 +80,16 @@ function createWindow() {
 
 	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
 	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
+
+	// Register shortcut listeners for left and right arrow
+	globalShortcut.register('Left', () => {
+		// sending to renderer process
+		win.webContents.send('leftKeyPressed');
+	});
+	globalShortcut.register('Right', () => {
+		// sending to renderer process
+		win.webContents.send('rightKeyPressed');
+	});
 
 	// the "open file or folder" dialog can also be triggered from the React app
 	ipcMain.on('openFileOrFolder', openFileOrFolder);
