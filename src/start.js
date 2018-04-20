@@ -1,10 +1,34 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, globalShortcut, dialog, ipcMain } = require('electron');
 // const path = require('path');
 // const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+
+const openFileOrFolder = () => {
+	// opening file dialog
+	const uri = dialog.showOpenDialog({
+		properties: ['openFile', 'openDirectory'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png', 'gif'] },
+			{ name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] }
+		]
+	});
+
+	// sending to renderer process
+	/*
+	TODO
+		{
+			folder: '/Users/Max',
+			currentFileIndex: 0,
+			filesInFolder: ['dog.jpeg', 'cat.png']
+		}
+	*/
+	win.webContents.send('fileSelectedByUser', {
+		uri
+	});
+};
 
 function createWindow() {
 	// Create the browser window.
@@ -14,7 +38,7 @@ function createWindow() {
 	win.loadURL('http://localhost:3000');
 
 	// Open the DevTools.
-	win.webContents.openDevTools();
+	// win.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	win.on('closed', () => {
@@ -23,6 +47,12 @@ function createWindow() {
 		// when you should delete the corresponding element.
 		win = null;
 	});
+
+	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
+	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
+
+	// the "open file or folder" dialog can also be triggered from the React app
+	ipcMain.on('openFileOrFolder', openFileOrFolder);
 }
 
 // This method will be called when Electron has finished
