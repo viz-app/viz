@@ -5,5 +5,8 @@
 		"browser": true,
 		"node": true,
 		"jasmine": true
+	},
+	"rules": {
+		"no-plusplus": 0
 	}
 }

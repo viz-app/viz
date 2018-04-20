@@ -1,4 +1,5 @@
 import React from 'react';
+import { fromJS } from 'immutable';
 
 import './App.css';
 import PictureViewer from './components/PictureViewer';
@@ -18,7 +19,7 @@ class App extends React.Component {
 			fileInfo: {
 				folder: '/Users/Max',
 				currentFileIndex: 0,
-				filesInFolder: ['dog.jpeg', 'cat.png']
+				filesInFolder: ['dog.jpeg', 'cat.png', 'duck.png']
 			}
 		};
 		ipcRenderer.on('fileSelectedByUser', (event, arg) => {
@@ -28,12 +29,41 @@ class App extends React.Component {
 		});
 		ipcRenderer.on('leftKeyPressed', (event, arg) => {
 			console.log(`Left key pressed ${arg}`);
+			this.decrIndex();
+			console.log(this.state.fileInfo.currentFileIndex);
 			// TODO actually change the state
 		});
 		ipcRenderer.on('rightKeyPressed', (event, arg) => {
 			console.log(`Right key pressed ${arg}`);
+			this.incrIndex();
+			console.log(this.state.fileInfo.currentFileIndex);
 			// TODO actually change the state
 		});
+
+		this.incrIndex = this.incrIndex.bind(this);
+		this.decrIndex = this.decrIndex.bind(this);
+	}
+
+	incrIndex() {
+		const fileInfoCopy = fromJS(this.state.fileInfo);
+		let incrementedIndex = fileInfoCopy.get('currentFileIndex');
+		if (incrementedIndex === this.state.fileInfo.filesInFolder.length - 1) {
+			incrementedIndex = 0;
+		} else {
+			incrementedIndex++;
+		}
+		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', incrementedIndex).toJS() });
+	}
+
+	decrIndex() {
+		const fileInfoCopy = fromJS(this.state.fileInfo);
+		let decrementedIndex = fileInfoCopy.get('currentFileIndex');
+		if (decrementedIndex === 0) {
+			decrementedIndex = this.state.fileInfo.filesInFolder.length - 1;
+		} else {
+			decrementedIndex--;
+		}
+		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
 	}
 
 	openFileOrFolder = () => {
