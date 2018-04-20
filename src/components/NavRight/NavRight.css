@@ -2,4 +2,13 @@
 	grid-area: navRight;
 	background-color: #455a64;
 	word-wrap: break-word;
+	display: flex;
+	flex-direction: column;
+	padding-left: 4px;
+}
+
+.icon {
+	color: white;
+	font-size: 2em;
+	padding-top: 15px;
 }
