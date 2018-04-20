@@ -2,7 +2,6 @@ const { app, BrowserWindow, globalShortcut, dialog, ipcMain } = require('electro
 const fs = require('fs');
 const path = require('path');
 
-// const path = require('path');
 // const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -60,6 +59,27 @@ const openFileOrFolder = () => {
 	}
 };
 
+function registerShortcuts() {
+	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
+	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
+
+	// Register shortcut listeners for left and right arrow
+	globalShortcut.register('Left', () => {
+		// sending to renderer process
+		win.webContents.send('leftKeyPressed');
+	});
+	globalShortcut.register('Right', () => {
+		// sending to renderer process
+		win.webContents.send('rightKeyPressed');
+	});
+}
+
+function unregisterShortcuts() {
+	globalShortcut.unregister('CommandOrControl+O');
+	globalShortcut.unregister('Left');
+	globalShortcut.unregister('Right');
+}
+
 function createWindow() {
 	// Create the browser window.
 	win = new BrowserWindow({ width: 1000, height: 768 });
@@ -78,18 +98,10 @@ function createWindow() {
 		win = null;
 	});
 
-	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
-	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
-
-	// Register shortcut listeners for left and right arrow
-	globalShortcut.register('Left', () => {
-		// sending to renderer process
-		win.webContents.send('leftKeyPressed');
-	});
-	globalShortcut.register('Right', () => {
-		// sending to renderer process
-		win.webContents.send('rightKeyPressed');
-	});
+	// registering / unregistering shortcuts when necessary
+	registerShortcuts();
+	win.on('focus', registerShortcuts);
+	win.on('blur', unregisterShortcuts);
 
 	// the "open file or folder" dialog can also be triggered from the React app
 	ipcMain.on('openFileOrFolder', openFileOrFolder);
