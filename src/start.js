@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, dialog } = require('electron');
+const { app, BrowserWindow, globalShortcut, dialog, ipcMain } = require('electron');
 // const path = require('path');
 // const url = require('url');
 
@@ -38,8 +38,11 @@ function createWindow() {
 		win = null;
 	});
 
-	// Register a 'CommandOrControl+O' shortcut listener.
+	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
 	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
+
+	// the "open file or folder" dialog can also be triggered from the React app
+	ipcMain.on('openFileOrFolder', openFileOrFolder);
 }
 
 // This method will be called when Electron has finished

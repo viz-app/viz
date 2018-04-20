@@ -20,6 +20,10 @@ class App extends React.Component {
 		});
 	}
 
+	openFileOrFolder = () => {
+		ipcRenderer.send('openFileOrFolder');
+	};
+
 	render() {
 		return (
 			<div className="App">
