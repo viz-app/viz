@@ -9,13 +9,16 @@ const path = require('path');
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 
+const imageExtensions = ['jpg', 'png', 'gif'];
+// const videoExtensions = ['mkv', 'avi', 'mp4'];
+
 const openFileOrFolder = () => {
 	// opening file dialog
 	const uris = dialog.showOpenDialog({
 		properties: ['openFile', 'openDirectory'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg', 'png', 'gif'] },
-			{ name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] }
+			{ name: 'Images', extensions: imageExtensions }
+			// { name: 'Movies', extensions: videoExtensions }
 		]
 	});
 
@@ -40,7 +43,10 @@ const openFileOrFolder = () => {
 		const payload = {
 			currentFileIndex: 0,
 			folder,
-			filesInFolder: fs.readdirSync(folder)
+			filesInFolder: fs.readdirSync(folder).filter(image => {
+				const imageExtension = path.extname(image).replace('.', '');
+				return imageExtensions.indexOf(imageExtension) !== -1;
+			})
 		};
 
 		// if the user selected a file instead of a folder, we update the index
@@ -56,7 +62,7 @@ const openFileOrFolder = () => {
 
 function createWindow() {
 	// Create the browser window.
-	win = new BrowserWindow({ width: 800, height: 600 });
+	win = new BrowserWindow({ width: 1000, height: 768 });
 
 	// and load the index.html of the app.
 	win.loadURL('http://localhost:3000');
