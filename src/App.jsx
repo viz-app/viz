@@ -16,6 +16,8 @@ class App extends React.Component {
 	constructor() {
 		super();
 		this.state = {
+			// fileInfo with default values
+			// TODO: maybe find better default values
 			fileInfo: {
 				folder: '/Users/Max',
 				currentFileIndex: 0,
@@ -30,38 +32,49 @@ class App extends React.Component {
 		});
 		ipcRenderer.on('leftKeyPressed', (event, arg) => {
 			console.log(`Left key pressed ${arg}`);
+			// linking the left key to an index decrement
 			this.decrIndex();
-			console.log(this.state.fileInfo.currentFileIndex);
 		});
 		ipcRenderer.on('rightKeyPressed', (event, arg) => {
 			console.log(`Right key pressed ${arg}`);
+			// linking the right key to an index increment
 			this.incrIndex();
-			console.log(this.state.fileInfo.currentFileIndex);
 		});
 
+		// binders for our handler functions
 		this.incrIndex = this.incrIndex.bind(this);
 		this.decrIndex = this.decrIndex.bind(this);
 	}
 
 	incrIndex() {
+		// function to increment the index
+		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
+		// getting the current index
 		let incrementedIndex = fileInfoCopy.get('currentFileIndex');
+		// managing the edge case, then the usual case
 		if (incrementedIndex === this.state.fileInfo.filesInFolder.length - 1) {
 			incrementedIndex = 0;
 		} else {
 			incrementedIndex++;
 		}
+		// setting the state with a modified fileInfoCopy
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', incrementedIndex).toJS() });
 	}
 
 	decrIndex() {
+		// function to increment the index
+		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
+		// getting the current index
 		let decrementedIndex = fileInfoCopy.get('currentFileIndex');
+		// managing the edge case, then the usual case
 		if (decrementedIndex === 0) {
 			decrementedIndex = this.state.fileInfo.filesInFolder.length - 1;
 		} else {
 			decrementedIndex--;
 		}
+		// setting the state with a modified fileInfoCopy
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
 	}
 
