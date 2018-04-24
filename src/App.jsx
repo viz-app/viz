@@ -86,7 +86,7 @@ class App extends React.Component {
 		return (
 			<FileInfoContext.Provider value={this.state.fileInfo}>
 				<div className="App">
-					<PictureViewer />
+					<PictureViewer onLeftArrow={this.decrIndex} onRightArrow={this.incrIndex} />
 					<NavLeft />
 					<NavRight />
 					<Slider />

@@ -23,8 +23,11 @@
 	height: 100%;
 	width: 20%;
 	text-align: center;
-	line-height: 100%;
 	font-size: 4em;
+	/* have to use flexbox for vertical center, vertical-align and line-height not applicable */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .pictureViewer .left-arrow {
