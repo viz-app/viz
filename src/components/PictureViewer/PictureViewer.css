@@ -1,8 +1,12 @@
 .pictureViewer {
 	grid-area: pictureViewer;
 	background-color: #1c313a;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
 }
 
-.pictureViewer img{
-    width: 100%;
+.pictureViewer img {
+	max-width: 100%;
+	max-height: 100%;
 }
