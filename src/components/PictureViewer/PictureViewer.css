@@ -2,6 +2,12 @@
 	/* define the name of this grid area */
 	grid-area: pictureViewer;
 	background-color: #1c313a;
+}
+
+.bufferDiv {
+	background-color: #1c313a;
+	height: 100%;
+	width: 100%;
 	/* center the images in the grid cell */
 	display: flex;
 	justify-content: space-around;
@@ -28,6 +34,9 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	/* reproducing a button behavior */
+	cursor: pointer;
+	user-select: none;
 }
 
 .pictureViewer .left-arrow {

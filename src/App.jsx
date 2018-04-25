@@ -15,20 +15,33 @@ const { ipcRenderer } = electron;
 class App extends React.Component {
 	constructor() {
 		super();
+		// binders for our handler functions
+		this.incrIndex = this.incrIndex.bind(this);
+		this.decrIndex = this.decrIndex.bind(this);
+
 		this.state = {
 			// fileInfo with default values
 			// TODO: maybe find better default values
 			fileInfo: {
 				folder: '/Users/Max',
 				currentFileIndex: 0,
-				filesInFolder: ['dog.jpeg', 'cat.png', 'duck.png']
+				filesInFolder: ['dog.jpeg', 'cat.png', 'duck.png'],
+				onLeftArrow: this.decrIndex,
+				onRightArrow: this.incrIndex
 			}
 		};
 		ipcRenderer.on('fileSelectedByUser', (event, arg) => {
+			const fileInfoCopy = fromJS(this.state.fileInfo);
 			// prints whatever file has been selected by the user
 			console.log(`file selected by user ${JSON.stringify(arg)}`);
-			this.setState({ fileInfo: arg });
-			// TODO actually set the state / context, load the image,etc.
+
+			this.setState({
+				fileInfo: fileInfoCopy
+					.set('folder', arg.folder)
+					.set('currentFileIndex', arg.currentFileIndex)
+					.set('filesInFolder', arg.filesInFolder)
+					.toJS()
+			});
 		});
 		ipcRenderer.on('leftKeyPressed', (event, arg) => {
 			console.log(`Left key pressed ${arg}`);
@@ -40,13 +53,10 @@ class App extends React.Component {
 			// linking the right key to an index increment
 			this.incrIndex();
 		});
-
-		// binders for our handler functions
-		this.incrIndex = this.incrIndex.bind(this);
-		this.decrIndex = this.decrIndex.bind(this);
 	}
 
 	incrIndex() {
+		console.log('run');
 		// function to increment the index
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
@@ -86,7 +96,7 @@ class App extends React.Component {
 		return (
 			<FileInfoContext.Provider value={this.state.fileInfo}>
 				<div className="App">
-					<PictureViewer onLeftArrow={this.decrIndex} onRightArrow={this.incrIndex} />
+					<PictureViewer />
 					<NavLeft />
 					<NavRight />
 					<Slider />
