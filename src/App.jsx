@@ -23,9 +23,9 @@ class App extends React.Component {
 			// fileInfo with default values
 			// TODO: maybe find better default values
 			fileInfo: {
-				folder: '/Users/Max',
+				folder: null,
 				currentFileIndex: 0,
-				filesInFolder: ['dog.jpeg', 'cat.png', 'duck.png'],
+				filesInFolder: [],
 				onLeftArrow: this.decrIndex,
 				onRightArrow: this.incrIndex
 			}
