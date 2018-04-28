@@ -13,15 +13,11 @@ const electron = window.require('electron');
 const { ipcRenderer } = electron;
 
 class App extends React.Component {
-	constructor() {
-		super();
-		// binders for our handler functions
-		this.incrIndex = this.incrIndex.bind(this);
-		this.decrIndex = this.decrIndex.bind(this);
+	constructor(props) {
+		super(props);
 
 		this.state = {
 			// fileInfo with default values
-			// TODO: maybe find better default values
 			fileInfo: {
 				folder: null,
 				currentFileIndex: 0,
@@ -30,6 +26,9 @@ class App extends React.Component {
 				onRightArrow: this.incrIndex
 			}
 		};
+	}
+
+	componentDidMount() {
 		ipcRenderer.on('fileSelectedByUser', (event, arg) => {
 			const fileInfoCopy = fromJS(this.state.fileInfo);
 			// prints whatever file has been selected by the user
@@ -55,8 +54,7 @@ class App extends React.Component {
 		});
 	}
 
-	incrIndex() {
-		console.log('run');
+	incrIndex = () => {
 		// function to increment the index
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
@@ -70,9 +68,9 @@ class App extends React.Component {
 		}
 		// setting the state with a modified fileInfoCopy
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', incrementedIndex).toJS() });
-	}
+	};
 
-	decrIndex() {
+	decrIndex = () => {
 		// function to increment the index
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
@@ -86,7 +84,7 @@ class App extends React.Component {
 		}
 		// setting the state with a modified fileInfoCopy
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
-	}
+	};
 
 	openFileOrFolder = () => {
 		ipcRenderer.send('openFileOrFolder');
