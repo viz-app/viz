@@ -1,4 +1,5 @@
 import React from 'react';
+import { fromJS } from 'immutable';
 
 import './App.css';
 import PictureViewer from './components/PictureViewer';
@@ -12,29 +13,75 @@ const electron = window.require('electron');
 const { ipcRenderer } = electron;
 
 class App extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
+
 		this.state = {
+			// fileInfo with default values
 			fileInfo: {
-				folder: '/Users/Max',
+				folder: null,
 				currentFileIndex: 0,
-				filesInFolder: ['dog.jpeg', 'cat.png']
+				filesInFolder: [],
+				onLeftArrow: this.decrIndex,
+				onRightArrow: this.incrIndex
 			}
 		};
+	}
+
+	componentDidMount() {
 		ipcRenderer.on('fileSelectedByUser', (event, arg) => {
+			const fileInfoCopy = fromJS(this.state.fileInfo);
 			// prints whatever file has been selected by the user
 			console.log(`file selected by user ${JSON.stringify(arg)}`);
-			// TODO actually set the state / context, load the image,etc.
+
+			this.setState({
+				fileInfo: fileInfoCopy
+					.set('folder', arg.folder)
+					.set('currentFileIndex', arg.currentFileIndex)
+					.set('filesInFolder', arg.filesInFolder)
+					.toJS()
+			});
 		});
 		ipcRenderer.on('leftKeyPressed', (event, arg) => {
 			console.log(`Left key pressed ${arg}`);
-			// TODO actually change the state
+			// linking the left key to an index decrement
+			this.decrIndex();
 		});
 		ipcRenderer.on('rightKeyPressed', (event, arg) => {
 			console.log(`Right key pressed ${arg}`);
-			// TODO actually change the state
+			// linking the right key to an index increment
+			this.incrIndex();
 		});
 	}
+
+	/**
+	 * Function to increment the index.
+	 */
+	incrIndex = () => {
+		// creating an immutable object from fileInfo
+		const fileInfoCopy = fromJS(this.state.fileInfo);
+		// getting the current index
+		let incrementedIndex = fileInfoCopy.get('currentFileIndex');
+		// managing the edge case, then the usual case
+		incrementedIndex = ++incrementedIndex % this.state.fileInfo.filesInFolder.length;
+		// setting the state with a modified fileInfoCopy
+		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', incrementedIndex).toJS() });
+	};
+
+	/**
+	 * Function to decrement the index.
+	 */
+	decrIndex = () => {
+		// creating an immutable object from fileInfo
+		const fileInfoCopy = fromJS(this.state.fileInfo);
+		// getting the current index
+		let decrementedIndex = fileInfoCopy.get('currentFileIndex');
+		// managing the edge case, then the usual case
+		decrementedIndex =
+			decrementedIndex === 0 ? this.state.fileInfo.filesInFolder.length - 1 : --decrementedIndex;
+		// setting the state with a modified fileInfoCopy
+		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
+	};
 
 	openFileOrFolder = () => {
 		ipcRenderer.send('openFileOrFolder');
