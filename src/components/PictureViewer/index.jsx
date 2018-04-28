@@ -1,4 +1,5 @@
-/* eslint "jsx-a11y/click-events-have-key-events": "off", "jsx-a11y/no-static-element-interactions": "off" */
+// disabling this rule as we handle key events through electron API
+/* eslint "jsx-a11y/click-events-have-key-events": "off" */
 import React from 'react';
 import FontIcon from 'react-toolbox/lib/font_icon';
 import './PictureViewer.css';
@@ -10,11 +11,14 @@ const PictureViewer = () => (
 		<FileInfoContext.Consumer>
 			{({ folder, currentFileIndex, filesInFolder, onLeftArrow, onRightArrow }) => (
 				<div className="bufferDiv">
-					<div className="arrow left-arrow" onClick={onLeftArrow}>
+					<div className="arrow left-arrow" onClick={onLeftArrow} role="button" tabIndex="0">
 						<FontIcon className="icon" value="keyboard_arrow_left" />
 					</div>
-					<img alt="" src={`file://${folder}/${filesInFolder[currentFileIndex]}`} />
-					<div className="arrow right-arrow" onClick={onRightArrow}>
+					<img
+						alt={`some picz ${currentFileIndex}`}
+						src={`file://${folder}/${filesInFolder[currentFileIndex]}`}
+					/>
+					<div className="arrow right-arrow" onClick={onRightArrow} role="button" tabIndex="0">
 						<FontIcon className="icon" value="keyboard_arrow_right" />
 					</div>
 				</div>
