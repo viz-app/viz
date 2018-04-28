@@ -54,34 +54,31 @@ class App extends React.Component {
 		});
 	}
 
+	/**
+	 * Function to increment the index.
+	 */
 	incrIndex = () => {
-		// function to increment the index
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
 		// getting the current index
 		let incrementedIndex = fileInfoCopy.get('currentFileIndex');
 		// managing the edge case, then the usual case
-		if (incrementedIndex === this.state.fileInfo.filesInFolder.length - 1) {
-			incrementedIndex = 0;
-		} else {
-			incrementedIndex++;
-		}
+		incrementedIndex = ++incrementedIndex % this.state.fileInfo.filesInFolder.length;
 		// setting the state with a modified fileInfoCopy
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', incrementedIndex).toJS() });
 	};
 
+	/**
+	 * Function to decrement the index.
+	 */
 	decrIndex = () => {
-		// function to increment the index
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
 		// getting the current index
 		let decrementedIndex = fileInfoCopy.get('currentFileIndex');
 		// managing the edge case, then the usual case
-		if (decrementedIndex === 0) {
-			decrementedIndex = this.state.fileInfo.filesInFolder.length - 1;
-		} else {
-			decrementedIndex--;
-		}
+		decrementedIndex =
+			decrementedIndex === 0 ? this.state.fileInfo.filesInFolder.length - 1 : --decrementedIndex;
 		// setting the state with a modified fileInfoCopy
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
 	};
