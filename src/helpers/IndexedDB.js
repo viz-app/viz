@@ -18,7 +18,8 @@ db.prefs.get({ key: DELETE_NO_CONFIRMATION }).then(value => {
 });
 db.prefs.get({ key: DEFAULT_PICTURES_PATH }).then(value => {
 	if (!value) {
-		db.prefs.add({ key: DEFAULT_PICTURES_PATH, value: '' });
+		// FIXME let's not assume we're always on MacOS
+		db.prefs.add({ key: DEFAULT_PICTURES_PATH, value: '~/Pictures' });
 	}
 });
 
