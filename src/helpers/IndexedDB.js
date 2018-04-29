@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import platform from 'platform';
 
 const db = new Dexie('viz_db');
 
@@ -18,8 +19,22 @@ db.prefs.get({ key: DELETE_NO_CONFIRMATION }).then(value => {
 });
 db.prefs.get({ key: DEFAULT_PICTURES_PATH }).then(value => {
 	if (!value) {
-		// FIXME let's not assume we're always on MacOS
-		db.prefs.add({ key: DEFAULT_PICTURES_PATH, value: '~/Pictures' });
+		// getting the OS version
+		let userDefaultPicturePath = '';
+		switch (platform.os.family) {
+			case 'OS X':
+			case 'Darwin':
+				userDefaultPicturePath = '~/Pictures';
+				break;
+			case 'Windows':
+				userDefaultPicturePath = 'C:\\UsersDefault';
+				break;
+			default:
+				userDefaultPicturePath = '';
+		}
+
+		// saving the default picture path
+		db.prefs.add({ key: DEFAULT_PICTURES_PATH, value: userDefaultPicturePath });
 	}
 });
 
@@ -51,12 +66,6 @@ const setUserPreference = (key, value) => {
  */
 const getImageRotation = (folderPath, fileName) =>
 	db.rotation.where({ folderPath, fileName }).then(result => result.rotation);
-/**
- * Helper to get the rotations of all images of a folder.
- * @param {*} folderPath The abosulte URI of the folder containing the images.
- * @returns An array of image rotations.
- */
-const getFolderRotations = folderPath => db.rotation.where({ folderPath });
 
 /**
  * Helper to save an image rotation.
@@ -65,8 +74,15 @@ const getFolderRotations = folderPath => db.rotation.where({ folderPath });
  * @param {*} rotation The rotation set by the user.
  */
 const setImageRotation = (folderPath, fileName, rotation) => {
-	db.prefs.update({ folderPath, fileName }, { folderPath, fileName, rotation });
+	db.prefs.update({ folderPath, fileName }, { rotation });
 };
+
+/**
+ * Helper to get the rotations of all images of a folder.
+ * @param {*} folderPath The abosulte URI of the folder containing the images.
+ * @returns An array of image rotations.
+ */
+const getFolderRotations = folderPath => db.rotation.where({ folderPath }).toArray();
 
 export {
 	DELETE_NO_CONFIRMATION,
@@ -74,6 +90,6 @@ export {
 	getUserPreference,
 	setUserPreference,
 	getImageRotation,
-	getFolderRotations,
-	setImageRotation
+	setImageRotation,
+	getFolderRotations
 };
