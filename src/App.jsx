@@ -32,7 +32,7 @@ class App extends React.Component {
 				onRightArrow: this.incrIndex
 			},
 			deleteNoConfirmation: false,
-			defaultPicturePath: null
+			defaultPicturePath: null,
 			leftBarHandlers: {
 				openHandler: this.openFileOrFolder
 			}
