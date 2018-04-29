@@ -7,6 +7,11 @@ import NavLeft from './components/NavLeft';
 import NavRight from './components/NavRight';
 import Slider from './components/Slider';
 import FileInfoContext from './FileInfoContext';
+import {
+	DELETE_NO_CONFIRMATION,
+	DEFAULT_PICTURES_PATH,
+	getUserPreference
+} from './helpers/IndexedDB';
 
 const electron = window.require('electron');
 // const fs = electron.remote.require('fs');
@@ -24,7 +29,9 @@ class App extends React.Component {
 				filesInFolder: [],
 				onLeftArrow: this.decrIndex,
 				onRightArrow: this.incrIndex
-			}
+			},
+			deleteNoConfirmation: false,
+			defaultPicturePath: null
 		};
 	}
 
@@ -52,6 +59,13 @@ class App extends React.Component {
 			// linking the right key to an index increment
 			this.incrIndex();
 		});
+
+		getUserPreference(DELETE_NO_CONFIRMATION).then(deleteNoConfirmation =>
+			this.setState({ deleteNoConfirmation })
+		);
+		getUserPreference(DEFAULT_PICTURES_PATH).then(defaultPicturePath =>
+			this.setState({ defaultPicturePath })
+		);
 	}
 
 	/**
@@ -95,6 +109,8 @@ class App extends React.Component {
 					<NavLeft />
 					<NavRight />
 					<Slider />
+					{/* TODO remove this next div, it is just here for debugging purpose */}
+					<div style={{ display: 'none' }}>{JSON.stringify(this.state)}</div>
 				</div>
 			</FileInfoContext.Provider>
 		);
