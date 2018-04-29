@@ -11,6 +11,10 @@ let win;
 const imageExtensions = ['jpg', 'png', 'gif'];
 // const videoExtensions = ['mkv', 'avi', 'mp4'];
 
+/**
+ * Utility function to convert the ~ to an absolute path if necessary
+ * @param {*} filepath
+ */
 const resolveHome = filepath => {
 	if (filepath[0] === '~') {
 		return path.join(process.env.HOME, filepath.slice(1));
@@ -18,6 +22,11 @@ const resolveHome = filepath => {
 	return filepath;
 };
 
+/**
+ * Function called when the user press cmd+O or click on the open button, or just when the app opens for the first time.
+ * @param {*} event The event name, useless, but it will be here.
+ * @param {*} defaultFolder The user default folder as setup in the user prefs (optional, will only be present when the opens for the first time).
+ */
 const openFileOrFolder = (event, defaultFolder) => {
 	const uris =
 		// if provided opening the folder passed as a parameter
