@@ -19,7 +19,7 @@
 		"eject": "react-scripts eject",
 		"precommit": "lint-staged",
 		"prettier": "prettier --write \"**/*.{js,jsx}\"",
-		"electron": "electron ./src/start.js"
+		"electron": "electron ./src/start-electron.js"
 	},
 	"devDependencies": {
 		"babel-eslint": "^8.2.3",

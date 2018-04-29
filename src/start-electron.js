@@ -11,23 +11,33 @@ let win;
 const imageExtensions = ['jpg', 'png', 'gif'];
 // const videoExtensions = ['mkv', 'avi', 'mp4'];
 
-const openFileOrFolder = () => {
-	// opening file dialog
-	const uris = dialog.showOpenDialog({
-		properties: ['openFile', 'openDirectory'],
-		filters: [
-			{ name: 'Images', extensions: imageExtensions }
-			// { name: 'Movies', extensions: videoExtensions }
-		]
-	});
+const resolveHome = filepath => {
+	if (filepath[0] === '~') {
+		return path.join(process.env.HOME, filepath.slice(1));
+	}
+	return filepath;
+};
+
+const openFileOrFolder = (event, defaultFolder) => {
+	const uris =
+		// if provided opening the folder passed as a parameter
+		(defaultFolder !== undefined && defaultFolder !== '' && [defaultFolder]) ||
+		// otherwise opening the file dialog
+		dialog.showOpenDialog({
+			properties: ['openFile', 'openDirectory'],
+			filters: [
+				{ name: 'Images', extensions: imageExtensions }
+				// { name: 'Movies', extensions: videoExtensions }
+			]
+		});
 
 	// if the user cancels, uri will be undefined
 	if (uris) {
-		const uri = uris[0];
+		let uri = uris[0];
+		uri = resolveHome(uri);
 
 		// preparing our JSON object
 		/*
-			TODO
 			{
 				folder: '/Users/Max',
 				currentFileIndex: 0,
@@ -36,7 +46,8 @@ const openFileOrFolder = () => {
 		*/
 		// the folder of the file selected by the user
 		// if the user selected a folder it will just return the same value
-		const folder = path.dirname(uri);
+		const stats = fs.lstatSync(uri);
+		const folder = stats.isFile() ? path.dirname(uri) : uri;
 
 		// defaulting to first picture of the folder
 		const payload = {
@@ -49,7 +60,6 @@ const openFileOrFolder = () => {
 		};
 
 		// if the user selected a file instead of a folder, we update the index
-		const stats = fs.lstatSync(uri);
 		if (stats.isFile()) {
 			payload.currentFileIndex = payload.filesInFolder.indexOf(path.basename(uri));
 		}

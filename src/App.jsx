@@ -63,9 +63,13 @@ class App extends React.Component {
 		getUserPreference(DELETE_NO_CONFIRMATION).then(deleteNoConfirmation =>
 			this.setState({ deleteNoConfirmation })
 		);
-		getUserPreference(DEFAULT_PICTURES_PATH).then(defaultPicturePath =>
-			this.setState({ defaultPicturePath })
-		);
+		getUserPreference(DEFAULT_PICTURES_PATH).then(defaultPicturePath => {
+			// updating the state
+			this.setState({ defaultPicturePath });
+
+			// and opening the default folder by default
+			ipcRenderer.send('openFileOrFolder', defaultPicturePath);
+		});
 	}
 
 	/**
