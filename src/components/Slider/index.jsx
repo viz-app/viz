@@ -5,13 +5,20 @@ import FileInfoContext from '../../FileInfoContext';
 const Slider = () => (
 	<div className="slider">
 		<FileInfoContext.Consumer>
-			{({ folder, filesInFolder }) => {
-				const imagesLinks = filesInFolder.map(imageAddress => (
-					<li className="slider-item">
-						<img alt="some picz" src={`file://${folder}/${imageAddress}`} />
-					</li>
+			{({ folder, filesInFolder, onSliderClick }) => {
+				const imagesLinks = filesInFolder.map((imageAddress, fileIndex) => (
+					<span
+						className="slider-item"
+						key={`${filesInFolder[fileIndex]}`}
+						onClick={() => onSliderClick(fileIndex)}
+						onKeyPress={() => onSliderClick(fileIndex)}
+						role="button"
+						tabIndex={0}
+					>
+						<img className="slider-img" alt="some picz" src={`file://${folder}/${imageAddress}`} />
+					</span>
 				));
-				return <ul className="slider-list">{imagesLinks}</ul>;
+				return <div className="slider-list">{imagesLinks}</div>;
 			}}
 		</FileInfoContext.Consumer>
 	</div>

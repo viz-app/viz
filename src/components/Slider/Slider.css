@@ -21,6 +21,6 @@
 	flex: 0 0 auto;
 }
 
-.slider-item img {
+.slider-item .slider-img {
 	max-height: 100%;
 }

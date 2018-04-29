@@ -23,7 +23,8 @@ class App extends React.Component {
 				currentFileIndex: 0,
 				filesInFolder: [],
 				onLeftArrow: this.decrIndex,
-				onRightArrow: this.incrIndex
+				onRightArrow: this.incrIndex,
+				onSliderClick: this.changeIndex
 			}
 		};
 	}
@@ -81,6 +82,13 @@ class App extends React.Component {
 			decrementedIndex === 0 ? this.state.fileInfo.filesInFolder.length - 1 : --decrementedIndex;
 		// setting the state with a modified fileInfoCopy
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
+	};
+
+	changeIndex = newIndex => {
+		// creating an immutable object from fileInfo
+		const fileInfoCopy = fromJS(this.state.fileInfo);
+		// setting the state with a modified fileInfoCopy
+		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', newIndex).toJS() });
 	};
 
 	openFileOrFolder = () => {
