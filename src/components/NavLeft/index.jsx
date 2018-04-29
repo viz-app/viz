@@ -2,13 +2,18 @@ import React from 'react';
 import FontIcon from 'react-toolbox/lib/font_icon';
 
 import './NavLeft.css';
+import LeftBarHandlersContext from '../../LeftBarHandlersContext';
 
 const NavLeft = () => (
 	<div className="navLeft">
-		<span>
-			<FontIcon className="icon" value="folder_open" />
-			<FontIcon className="icon" value="settings" />
-		</span>
+		<LeftBarHandlersContext.Consumer>
+			{({ openHandler }) => (
+				<span>
+					<FontIcon className="icon" value="folder_open" onClick={openHandler} />
+					<FontIcon className="icon" value="settings" />
+				</span>
+			)}
+		</LeftBarHandlersContext.Consumer>
 	</div>
 );
 
