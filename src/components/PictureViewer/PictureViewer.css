@@ -2,6 +2,7 @@
 	/* define the name of this grid area */
 	grid-area: pictureViewer;
 	background-color: #1c313a;
+	user-select: none;
 }
 
 .bufferDiv {
@@ -37,6 +38,11 @@
 	/* reproducing a button behavior */
 	cursor: pointer;
 	user-select: none;
+}
+
+.arrow:focus {
+	/* removing focus blue border */
+	outline: none;
 }
 
 .pictureViewer .left-arrow {
