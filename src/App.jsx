@@ -12,6 +12,7 @@ import {
 	DEFAULT_PICTURES_PATH,
 	getUserPreference
 } from './helpers/IndexedDB';
+import LeftBarHandlersContext from './LeftBarHandlersContext';
 
 const electron = window.require('electron');
 // const fs = electron.remote.require('fs');
@@ -32,6 +33,9 @@ class App extends React.Component {
 			},
 			deleteNoConfirmation: false,
 			defaultPicturePath: null
+			leftBarHandlers: {
+				openHandler: this.openFileOrFolder
+			}
 		};
 	}
 
@@ -110,7 +114,9 @@ class App extends React.Component {
 			<FileInfoContext.Provider value={this.state.fileInfo}>
 				<div className="App">
 					<PictureViewer />
-					<NavLeft />
+					<LeftBarHandlersContext.Provider value={this.state.leftBarHandlers}>
+						<NavLeft />
+					</LeftBarHandlersContext.Provider>
 					<NavRight />
 					<Slider />
 					{/* TODO remove this next div, it is just here for debugging purpose */}
