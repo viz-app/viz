@@ -41,7 +41,7 @@ const openFileOrFolder = (event, defaultFolder) => {
 		});
 
 	// if the user cancels, uri will be undefined
-	if (uris) {
+	if (uris && uris.length > 0) {
 		let uri = uris[0];
 		uri = resolveHome(uri);
 

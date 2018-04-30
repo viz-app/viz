@@ -10,6 +10,7 @@ import FileInfoContext from './FileInfoContext';
 import {
 	DELETE_NO_CONFIRMATION,
 	DEFAULT_PICTURES_PATH,
+	init,
 	getUserPreference
 } from './helpers/IndexedDB';
 import LeftBarHandlersContext from './LeftBarHandlersContext';
@@ -64,15 +65,17 @@ class App extends React.Component {
 			this.incrIndex();
 		});
 
-		getUserPreference(DELETE_NO_CONFIRMATION).then(deleteNoConfirmation =>
-			this.setState({ deleteNoConfirmation })
-		);
-		getUserPreference(DEFAULT_PICTURES_PATH).then(defaultPicturePath => {
-			// updating the state
-			this.setState({ defaultPicturePath });
+		init().then(() => {
+			getUserPreference(DELETE_NO_CONFIRMATION).then(deleteNoConfirmation =>
+				this.setState({ deleteNoConfirmation })
+			);
+			getUserPreference(DEFAULT_PICTURES_PATH).then(defaultPicturePath => {
+				// updating the state
+				this.setState({ defaultPicturePath });
 
-			// and opening the default folder by default
-			ipcRenderer.send('openFileOrFolder', defaultPicturePath);
+				// and opening the default folder by default
+				ipcRenderer.send('openFileOrFolder', defaultPicturePath);
+			});
 		});
 	}
 
