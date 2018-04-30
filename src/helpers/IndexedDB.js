@@ -1,42 +1,49 @@
 import Dexie from 'dexie';
 import platform from 'platform';
 
-const db = new Dexie('viz_db');
-
 const DELETE_NO_CONFIRMATION = 'delete.no.confirmation';
 const DEFAULT_PICTURES_PATH = 'default.pictures.path';
 
-db.version(1).stores({
-	prefs: '&key',
-	rotation: '[folderPath+fileName]'
-});
+const db = new Dexie('viz_db');
 
-// initializing default prefs
-db.prefs.get({ key: DELETE_NO_CONFIRMATION }).then(value => {
-	if (!value) {
-		db.prefs.add({ key: DELETE_NO_CONFIRMATION, value: false });
-	}
-});
-db.prefs.get({ key: DEFAULT_PICTURES_PATH }).then(value => {
-	if (!value) {
-		// getting the OS version
-		let userDefaultPicturePath = '';
-		switch (platform.os.family) {
-			case 'OS X':
-			case 'Darwin':
-				userDefaultPicturePath = '~/Pictures';
-				break;
-			case 'Windows':
-				userDefaultPicturePath = 'C:\\UsersDefault';
-				break;
-			default:
-				userDefaultPicturePath = '';
+/**
+ * IndexedDB initialization.
+ */
+const init = () => {
+	db.version(1).stores({
+		prefs: '&key',
+		rotation: '[folderPath+fileName]'
+	});
+
+	// initializing default prefs
+	const pref1 = db.prefs.get({ key: DELETE_NO_CONFIRMATION }).then(value => {
+		if (!value) {
+			db.prefs.add({ key: DELETE_NO_CONFIRMATION, value: false });
 		}
+	});
+	const pref2 = db.prefs.get({ key: DEFAULT_PICTURES_PATH }).then(value => {
+		if (!value) {
+			// getting the OS version
+			let userDefaultPicturePath = '';
+			switch (platform.os.family) {
+				case 'OS X':
+				case 'Darwin':
+					userDefaultPicturePath = '~/Pictures';
+					break;
+				case 'Windows':
+					userDefaultPicturePath = 'C:\\UsersDefault';
+					break;
+				default:
+					userDefaultPicturePath = '';
+			}
 
-		// saving the default picture path
-		db.prefs.add({ key: DEFAULT_PICTURES_PATH, value: userDefaultPicturePath });
-	}
-});
+			// saving the default picture path
+			db.prefs.add({ key: DEFAULT_PICTURES_PATH, value: userDefaultPicturePath });
+		}
+	});
+
+	return Promise.all([pref1, pref2]);
+};
 
 // user prefs helpers
 
@@ -87,6 +94,7 @@ const getFolderRotations = folderPath => db.rotation.where({ folderPath }).toArr
 export {
 	DELETE_NO_CONFIRMATION,
 	DEFAULT_PICTURES_PATH,
+	init,
 	getUserPreference,
 	setUserPreference,
 	getImageRotation,
