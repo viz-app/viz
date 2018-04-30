@@ -2,12 +2,12 @@
 	grid-area: slider;
 	background-color: #1c313a;
 	user-select: none;
-	overflow-x: auto;
+	overflow-x: scroll;
 }
 
 .slider-list {
 	width: 100%;
-	height: 140px;
+	height: 130px;
 	display: flex;
 	flex-wrap: nowrap;
 	margin: 0;
@@ -19,8 +19,18 @@
 	list-style: none;
 	height: 130px;
 	flex: 0 0 auto;
+	margin-left: 5px;
 }
 
 .slider-item .slider-img {
 	max-height: 100%;
+}
+
+::-webkit-scrollbar {
+	-webkit-appearance: none;
+	width: 10px;
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 4px;
+	background-color: rgba(0, 0, 0, 0.5);
 }

@@ -1,9 +1,12 @@
 .App {
 	display: grid;
 	grid-template-columns: 40px auto 40px;
-	grid-template-rows: auto 150px;
+	/* using calc to have an exact value, auto adapts to the image size otherwise */
+	grid-template-rows: calc(100% - 160px) 160px;
 	grid-template-areas:
 		'navLeft pictureViewer navRight'
 		'navLeft slider navRight';
 	height: 100%;
 }
+
+
