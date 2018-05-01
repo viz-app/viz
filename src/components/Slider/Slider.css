@@ -11,15 +11,19 @@
 	display: flex;
 	flex-wrap: nowrap;
 	margin: 0;
-	padding: 5px 0px;
-	-webkit-margin-after: 0;
+	padding-top: 5px;
 }
 
 .slider-item {
 	list-style: none;
 	height: 130px;
 	flex: 0 0 auto;
-	margin-left: 5px;
+	margin: 0px 5px;
+}
+
+.slider-item:focus {
+	outline: 3px solid white;
+	/* border: 3px solid white; */
 }
 
 .slider-item .slider-img {
@@ -28,9 +32,8 @@
 
 ::-webkit-scrollbar {
 	-webkit-appearance: none;
-	width: 10px;
+	height: 18px;
 }
 ::-webkit-scrollbar-thumb {
-	border-radius: 4px;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: #455a64;
 }
