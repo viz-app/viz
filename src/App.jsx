@@ -7,6 +7,13 @@ import NavLeft from './components/NavLeft';
 import NavRight from './components/NavRight';
 import Slider from './components/Slider';
 import FileInfoContext from './FileInfoContext';
+import {
+	DELETE_NO_CONFIRMATION,
+	DEFAULT_PICTURES_PATH,
+	init,
+	getUserPreference
+} from './helpers/IndexedDB';
+import LeftBarHandlersContext from './LeftBarHandlersContext';
 
 const electron = window.require('electron');
 // const fs = electron.remote.require('fs');
@@ -23,8 +30,13 @@ class App extends React.Component {
 				currentFileIndex: 0,
 				filesInFolder: [],
 				onLeftArrow: this.decrIndex,
-				onRightArrow: this.incrIndex,
-				onSliderClick: this.changeIndex
+				onSliderClick: this.changeIndex,
+				onRightArrow: this.incrIndex
+			},
+			deleteNoConfirmation: false,
+			defaultPicturePath: null,
+			leftBarHandlers: {
+				openHandler: this.openFileOrFolder
 			}
 		};
 	}
@@ -52,6 +64,19 @@ class App extends React.Component {
 			console.log(`Right key pressed ${arg}`);
 			// linking the right key to an index increment
 			this.incrIndex();
+		});
+
+		init().then(() => {
+			getUserPreference(DELETE_NO_CONFIRMATION).then(deleteNoConfirmation =>
+				this.setState({ deleteNoConfirmation })
+			);
+			getUserPreference(DEFAULT_PICTURES_PATH).then(defaultPicturePath => {
+				// updating the state
+				this.setState({ defaultPicturePath });
+
+				// and opening the default folder by default
+				ipcRenderer.send('openFileOrFolder', defaultPicturePath);
+			});
 		});
 	}
 
@@ -100,9 +125,13 @@ class App extends React.Component {
 			<FileInfoContext.Provider value={this.state.fileInfo}>
 				<div className="App">
 					<PictureViewer />
-					<NavLeft />
+					<LeftBarHandlersContext.Provider value={this.state.leftBarHandlers}>
+						<NavLeft />
+					</LeftBarHandlersContext.Provider>
 					<NavRight />
 					<Slider />
+					{/* TODO remove this next div, it is just here for debugging purpose */}
+					<div style={{ display: 'none' }}>{JSON.stringify(this.state)}</div>
 				</div>
 			</FileInfoContext.Provider>
 		);
