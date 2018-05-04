@@ -6,6 +6,8 @@ class SliderItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.itemRef = React.createRef();
+		// defining onSlider to avoid function definition at each render()
+		this.onSlider = this.props.onSliderClick.bind(null, this.props.thisFileIndex);
 	}
 
 	// needs to be done when the items are creating at SW initialization
@@ -30,13 +32,13 @@ class SliderItem extends React.Component {
 		return (
 			<span
 				className="slider-item"
-				onClick={() => this.props.onSliderClick(this.props.thisFileIndex)}
-				onKeyPress={() => this.props.onSliderClick(this.props.thisFileIndex)}
+				onClick={this.onSlider}
+				onKeyPress={this.onSlider}
 				role="button"
 				tabIndex={0}
 				ref={this.itemRef}
 			>
-				<img className="slider-img" alt="some picz" src={this.props.imgAddress} />
+				<img className="slider-img" alt="some picz" src={this.props.imgUri} />
 			</span>
 		);
 	}
@@ -46,7 +48,7 @@ SliderItem.propTypes = {
 	currentFocusIndex: PropTypes.number.isRequired,
 	thisFileIndex: PropTypes.number.isRequired,
 	onSliderClick: PropTypes.func.isRequired,
-	imgAddress: PropTypes.string.isRequired
+	imgUri: PropTypes.string.isRequired
 };
 
 export default SliderItem;

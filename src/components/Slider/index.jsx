@@ -13,7 +13,7 @@ const Slider = () => (
 						currentFocusIndex={currentFileIndex}
 						thisFileIndex={fileIndex}
 						onSliderClick={onSliderClick}
-						imgAddress={`file://${folder}/${imageAddress}`}
+						imgUri={`file://${folder}/${imageAddress}`}
 					/>
 				));
 				return <div className="slider-list">{imagesLinks}</div>;
