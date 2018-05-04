@@ -6,8 +6,6 @@ class SliderItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.itemRef = React.createRef();
-		// defining onSlider to avoid function definition at each render()
-		this.onSlider = this.props.onSliderClick.bind(null, this.props.thisFileIndex);
 	}
 
 	// needs to be done when the items are creating at SW initialization
@@ -19,6 +17,12 @@ class SliderItem extends React.Component {
 	componentDidUpdate() {
 		this.takeFocus();
 	}
+
+	// defining onSlider to avoid function definition at each render()
+	onSlider = () => {
+		const { onSliderClick, thisFileIndex } = this.props;
+		onSliderClick(thisFileIndex);
+	};
 
 	// a function that uses the ref to the DOM to call the focus on this element, using the native .focus() method
 	takeFocus() {
