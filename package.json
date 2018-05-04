@@ -25,7 +25,7 @@
 		"prettier": "prettier --write \"**/*.{js,jsx}\"",
 		"electron": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
 		"electron-pack": "build -c.extraMetadata.main=build/start-electron.js",
-		"preelectron-pack": "npm build"
+		"preelectron-pack": "npm run build"
 	},
 	"devDependencies": {
 		"babel-eslint": "^8.2.3",
