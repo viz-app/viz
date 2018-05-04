@@ -9,8 +9,6 @@ There is no good default image viewer for MacOS (you need to open images one by 
 ## Getting started
 
 `npm i` <br>
-Then in two separate terminals : <br>
-`npm start`<br>
 `npm run electron`
 
 ## Roadmap
