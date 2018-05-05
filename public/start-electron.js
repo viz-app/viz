@@ -26,17 +26,30 @@ const resolveHome = filepath => {
 	return filepath;
 };
 
+// this will have a value when the user open a file when the app is not running yet
+let openThisFileOrFolderWhenTheWindowIsCreated = null;
+
 /**
  * Function called when the user press cmd+O or click on the open button, or just when the app opens for the first time.
  * @param {*} event The event name, useless, but it will be here.
  * @param {*} defaultFolder The user default folder as setup in the user prefs (optional, will only be present when the opens for the first time).
  */
 const openFileOrFolder = (event, defaultFolder) => {
-	const uris =
-		// if provided opening the folder passed as a parameter
-		(defaultFolder !== undefined && defaultFolder !== '' && [defaultFolder]) ||
-		// otherwise opening the file dialog
-		dialog.showOpenDialog({
+	let uris = null;
+
+	// if the user opened a file while the app was not running yet
+	if (openThisFileOrFolderWhenTheWindowIsCreated) {
+		uris = [openThisFileOrFolderWhenTheWindowIsCreated];
+		openThisFileOrFolderWhenTheWindowIsCreated = null;
+	}
+	// else if provided opening the folder passed as a parameter (generally the default pic folder)
+	else if (defaultFolder) {
+		uris = [defaultFolder];
+	}
+
+	// otherwise opening the file dialog
+	else {
+		uris = dialog.showOpenDialog({
 			properties: ['openFile', 'openDirectory'],
 			filters: [
 				{
@@ -46,8 +59,9 @@ const openFileOrFolder = (event, defaultFolder) => {
 				// { name: 'Movies', extensions: videoExtensions }
 			]
 		});
+	}
 
-	// if the user cancels, uri will be undefined
+	// if the user cancels, uris will be undefined
 	if (uris) {
 		let uri = uris[0];
 		uri = resolveHome(uri);
@@ -240,8 +254,17 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
-// Quit when all windows are closed.
-app.on('open-file', openFileOrFolder);
+// Listening to the open file event (when the user open a file through the menu bar, or through the OS by double click or similar)
+app.on('open-file', (event, fileOrFolder) => {
+	event.preventDefault();
+	// if the app is ready and initialized, we open this file or folder
+	if (win) {
+		openFileOrFolder(fileOrFolder);
+	} else {
+		// else we store it in a variable, and wait for the app to be ready before opening it
+		openThisFileOrFolderWhenTheWindowIsCreated = fileOrFolder;
+	}
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
