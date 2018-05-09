@@ -53,6 +53,7 @@ class App extends React.Component {
 			console.log(`file selected by user ${JSON.stringify(arg)}`);
 
 			this.setState({
+				// TODO add the current rotation (fetch it in the indexedDB)
 				fileInfo: fileInfoCopy
 					.set('folder', arg.folder)
 					.set('currentFileIndex', arg.currentFileIndex)
@@ -96,7 +97,13 @@ class App extends React.Component {
 		// managing the edge case, then the usual case
 		incrementedIndex = ++incrementedIndex % this.state.fileInfo.filesInFolder.length;
 		// setting the state with a modified fileInfoCopy
-		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', incrementedIndex).toJS() });
+		// TODO update it to fetch rotate value in indexedDB, and store the previous one
+		this.setState({
+			fileInfo: fileInfoCopy
+				.set('currentFileIndex', incrementedIndex)
+				.set('currentFileRotation', 0)
+				.toJS()
+		});
 	};
 
 	/**
@@ -111,7 +118,12 @@ class App extends React.Component {
 		decrementedIndex =
 			decrementedIndex === 0 ? this.state.fileInfo.filesInFolder.length - 1 : --decrementedIndex;
 		// setting the state with a modified fileInfoCopy
-		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
+		this.setState({
+			fileInfo: fileInfoCopy
+				.set('currentFileIndex', decrementedIndex)
+				.set('currentFileRotation', 0)
+				.toJS()
+		});
 	};
 
 	changeIndex = newIndex => {
@@ -125,9 +137,11 @@ class App extends React.Component {
 		ipcRenderer.send('openFileOrFolder');
 	};
 
+	// function to handle image rotation
 	rotateImage = isRotateRight => {
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
+		// based on whether it shall turn right or left, it sets the state to the correct value
 		let currentRotation = fileInfoCopy.get('currentFileRotation');
 		if (isRotateRight) {
 			currentRotation = (currentRotation + 90) % 360;
