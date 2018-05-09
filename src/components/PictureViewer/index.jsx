@@ -25,9 +25,6 @@ class PictureViewer extends React.Component {
 						onRightArrow
 					}) => (
 						<div className="bufferDiv" ref={this.itemRef}>
-							<div className="arrow left-arrow" onClick={onLeftArrow} role="button" tabIndex="0">
-								<FontIcon className="icon" value="keyboard_arrow_left" />
-							</div>
 							<img
 								className={`rotate${currentFileRotation}`}
 								style={{
@@ -41,6 +38,9 @@ class PictureViewer extends React.Component {
 								alt={`some picz ${currentFileIndex}`}
 								src={`file://${folder}/${filesInFolder[currentFileIndex]}`}
 							/>
+							<div className="arrow left-arrow" onClick={onLeftArrow} role="button" tabIndex="0">
+								<FontIcon className="icon" value="keyboard_arrow_left" />
+							</div>
 							<div className="arrow right-arrow" onClick={onRightArrow} role="button" tabIndex="0">
 								<FontIcon className="icon" value="keyboard_arrow_right" />
 							</div>

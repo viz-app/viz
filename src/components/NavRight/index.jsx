@@ -11,8 +11,20 @@ const NavRight = () => (
 				<span>
 					<FontIcon className="icon" value="delete" />
 					<FontIcon className="icon" value="share" />
-					<FontIcon className="icon" value="rotate_left" onClick={rotateHandler} />
-					<FontIcon className="icon" value="rotate_right" />
+					<FontIcon
+						className="icon"
+						value="rotate_left"
+						onClick={() => {
+							rotateHandler(false);
+						}}
+					/>
+					<FontIcon
+						className="icon"
+						value="rotate_right"
+						onClick={() => {
+							rotateHandler(true);
+						}}
+					/>
 				</span>
 			)}
 		</RightBarHandlersContext.Consumer>

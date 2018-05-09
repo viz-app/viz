@@ -125,11 +125,16 @@ class App extends React.Component {
 		ipcRenderer.send('openFileOrFolder');
 	};
 
-	rotateImage = () => {
+	rotateImage = isRotateRight => {
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
 		let currentRotation = fileInfoCopy.get('currentFileRotation');
-		currentRotation = (currentRotation + 90) % 360;
+		if (isRotateRight) {
+			currentRotation = (currentRotation + 90) % 360;
+		} else {
+			currentRotation = currentRotation - 90 === -90 ? 270 : currentRotation - 90;
+		}
+
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileRotation', currentRotation).toJS() });
 	};
 

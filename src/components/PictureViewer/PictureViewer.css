@@ -57,22 +57,3 @@
 	opacity: 0.8;
 }
 
-.rotate0 {
-	transform: rotate(0deg);
-	object-fit: contain;
-}
-
-.rotate90 {
-	transform: rotate(90deg);
-	object-fit: contain;
-}
-
-.rotate180 {
-	transform: rotate(180deg);
-	object-fit: contain;
-}
-
-.rotate270 {
-	transform: rotate(270deg);
-	object-fit: contain;
-}
