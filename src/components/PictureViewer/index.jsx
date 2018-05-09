@@ -9,12 +9,20 @@ const PictureViewer = () => (
 	<div className="pictureViewer">
 		{/* creating a consumer for the context to display the current image */}
 		<FileInfoContext.Consumer>
-			{({ folder, currentFileIndex, filesInFolder, onLeftArrow, onRightArrow }) => (
+			{({
+				folder,
+				currentFileIndex,
+				currentFileRotation,
+				filesInFolder,
+				onLeftArrow,
+				onRightArrow
+			}) => (
 				<div className="bufferDiv">
 					<div className="arrow left-arrow" onClick={onLeftArrow} role="button" tabIndex="0">
 						<FontIcon className="icon" value="keyboard_arrow_left" />
 					</div>
 					<img
+						className={`rotate${currentFileRotation}`}
 						alt={`some picz ${currentFileIndex}`}
 						src={`file://${folder}/${filesInFolder[currentFileIndex]}`}
 					/>

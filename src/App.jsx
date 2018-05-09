@@ -14,6 +14,7 @@ import {
 	getUserPreference
 } from './helpers/IndexedDB';
 import LeftBarHandlersContext from './LeftBarHandlersContext';
+import RightBarHandlersContext from './RightBarHandlersContext';
 
 const electron = window.require('electron');
 // const fs = electron.remote.require('fs');
@@ -28,6 +29,7 @@ class App extends React.Component {
 			fileInfo: {
 				folder: null,
 				currentFileIndex: 0,
+				currentFileRotation: 0,
 				filesInFolder: [],
 				onLeftArrow: this.decrIndex,
 				onSliderClick: this.changeIndex,
@@ -37,6 +39,9 @@ class App extends React.Component {
 			defaultPicturePath: null,
 			leftBarHandlers: {
 				openHandler: this.openFileOrFolder
+			},
+			rightBarHandlers: {
+				rotateHandler: this.rotateImage
 			}
 		};
 	}
@@ -120,6 +125,14 @@ class App extends React.Component {
 		ipcRenderer.send('openFileOrFolder');
 	};
 
+	rotateImage = () => {
+		// creating an immutable object from fileInfo
+		const fileInfoCopy = fromJS(this.state.fileInfo);
+		let currentRotation = fileInfoCopy.get('currentFileRotation');
+		currentRotation = (currentRotation + 90) % 360;
+		this.setState({ fileInfo: fileInfoCopy.set('currentFileRotation', currentRotation).toJS() });
+	};
+
 	render() {
 		return (
 			<FileInfoContext.Provider value={this.state.fileInfo}>
@@ -128,7 +141,9 @@ class App extends React.Component {
 					<LeftBarHandlersContext.Provider value={this.state.leftBarHandlers}>
 						<NavLeft />
 					</LeftBarHandlersContext.Provider>
-					<NavRight />
+					<RightBarHandlersContext.Provider value={this.state.rightBarHandlers}>
+						<NavRight />
+					</RightBarHandlersContext.Provider>
 					<Slider />
 					{/* TODO remove this next div, it is just here for debugging purpose */}
 					<div style={{ display: 'none' }}>{JSON.stringify(this.state)}</div>
