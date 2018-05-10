@@ -5,15 +5,8 @@ const { app, BrowserWindow, globalShortcut, dialog, ipcMain, Menu, shell } = req
 const fs = require('fs');
 const path = require('path');
 const isDev = require('electron-is-dev');
-
-// const url = require('url');
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let win;
-
-const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-// const videoExtensions = ['mkv', 'avi', 'mp4'];
+const debug = require('debug');
+const util = require('util');
 
 /**
  * Utility function to convert the ~ to an absolute path if necessary
@@ -26,6 +19,35 @@ const resolveHome = filepath => {
 	return filepath;
 };
 
+// custom logger to file because nothing else works
+// XXX that might not work so well if we use debug on the client side too. OR maybe it will work ¯\_(ツ)_/¯
+// https://github.com/visionmedia/debug/issues/253#issuecomment-207619335
+const logFile = fs.createWriteStream(resolveHome('~/Library/Logs/viz/log.log'), {
+	flags: 'a'
+});
+
+// overrides log function
+debug.log = (...args) => {
+	const str = `${util.format.apply(null, args)}\n`;
+	console.log(str);
+	logFile.write(str);
+};
+
+// creates logger
+const log = debug('viz');
+// programmatically enabling these logs always, to avoid passing an env variable in prod, or DEBUG='*'
+// FIXME delete if it's actually unnecessary
+// debug.enable('viz');
+
+// const url = require('url');
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win;
+
+const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+// const videoExtensions = ['mkv', 'avi', 'mp4'];
+
 // this will have a value when the user open a file when the app is not running yet
 let openThisFileOrFolderWhenTheWindowIsCreated = null;
 
@@ -36,6 +58,8 @@ let openThisFileOrFolderWhenTheWindowIsCreated = null;
  */
 const openFileOrFolder = (event, defaultFolder) => {
 	let uris = null;
+
+	log('openFileOrFolder', 'defaultFolder', defaultFolder);
 
 	// if the user opened a file while the app was not running yet
 	if (openThisFileOrFolderWhenTheWindowIsCreated) {
