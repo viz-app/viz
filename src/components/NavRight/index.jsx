@@ -4,6 +4,7 @@ import FontIcon from 'react-toolbox/lib/font_icon';
 import './NavRight.css';
 import RightBarHandlersContext from './../../RightBarHandlersContext';
 
+// TODO should I create two functions for rotate to avoid definition at each render ? In the mean time, it is pretty much never re-rendered
 const NavRight = () => (
 	<div className="navRight">
 		<RightBarHandlersContext.Consumer>
