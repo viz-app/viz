@@ -34,12 +34,9 @@ debug.log = (...args) => {
 };
 
 // creates logger
-const log = debug('viz');
+const logger = debug('viz');
 // programmatically enabling these logs always, to avoid passing an env variable in prod, or DEBUG='*'
-// FIXME delete if it's actually unnecessary
-// debug.enable('viz');
-
-// const url = require('url');
+debug.enable('viz');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -59,7 +56,7 @@ let openThisFileOrFolderWhenTheWindowIsCreated = null;
 const openFileOrFolder = (event, defaultFolder) => {
 	let uris = null;
 
-	log('openFileOrFolder', 'defaultFolder', defaultFolder);
+	logger('openFileOrFolder', 'defaultFolder', defaultFolder);
 
 	// if the user opened a file while the app was not running yet
 	if (openThisFileOrFolderWhenTheWindowIsCreated) {
@@ -250,7 +247,8 @@ function createWindow() {
 		isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`
 	);
 
-	// Open the DevTools.
+	// Automatically open the DevTools on start.
+	// XXX uncomment if necessary
 	// win.webContents.openDevTools();
 
 	// Emitted when the window is closed.
