@@ -1,16 +1,12 @@
-const { app, BrowserWindow, globalShortcut, dialog, ipcMain } = require('electron');
+// we had to place this file in `public` for the bundler
+/* eslint-disable import/no-extraneous-dependencies */
+const { app, BrowserWindow, globalShortcut, dialog, ipcMain, Menu, shell } = require('electron');
+/* eslint-disable import/no-extraneous-dependencies */
 const fs = require('fs');
 const path = require('path');
 const isDev = require('electron-is-dev');
-
-// const url = require('url');
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let win;
-
-const imageExtensions = ['jpg', 'png', 'gif'];
-// const videoExtensions = ['mkv', 'avi', 'mp4'];
+const debug = require('debug');
+const util = require('util');
 
 /**
  * Utility function to convert the ~ to an absolute path if necessary
@@ -23,17 +19,58 @@ const resolveHome = filepath => {
 	return filepath;
 };
 
+// custom logger to file because nothing else works
+// XXX that might not work so well if we use debug on the client side too. OR maybe it will work ¯\_(ツ)_/¯
+// https://github.com/visionmedia/debug/issues/253#issuecomment-207619335
+const logFile = fs.createWriteStream(resolveHome('~/Library/Logs/viz/log.log'), {
+	flags: 'a'
+});
+
+// overrides log function
+debug.log = (...args) => {
+	const str = `${util.format.apply(null, args)}\n`;
+	console.log(str);
+	logFile.write(str);
+};
+
+// creates logger
+const logger = debug('viz');
+// programmatically enabling these logs always, to avoid passing an env variable in prod, or DEBUG='*'
+debug.enable('viz');
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win;
+
+const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+// const videoExtensions = ['mkv', 'avi', 'mp4'];
+
+// this will have a value when the user open a file when the app is not running yet
+let openThisFileOrFolderWhenTheWindowIsCreated = null;
+
 /**
  * Function called when the user press cmd+O or click on the open button, or just when the app opens for the first time.
  * @param {*} event The event name, useless, but it will be here.
  * @param {*} defaultFolder The user default folder as setup in the user prefs (optional, will only be present when the opens for the first time).
  */
 const openFileOrFolder = (event, defaultFolder) => {
-	const uris =
-		// if provided opening the folder passed as a parameter
-		(defaultFolder !== undefined && defaultFolder !== '' && [defaultFolder]) ||
-		// otherwise opening the file dialog
-		dialog.showOpenDialog({
+	let uris = null;
+
+	logger('openFileOrFolder', 'defaultFolder', defaultFolder);
+
+	// if the user opened a file while the app was not running yet
+	if (openThisFileOrFolderWhenTheWindowIsCreated) {
+		uris = [openThisFileOrFolderWhenTheWindowIsCreated];
+		openThisFileOrFolderWhenTheWindowIsCreated = null;
+	}
+	// else if provided opening the folder passed as a parameter (generally the default pic folder)
+	else if (defaultFolder) {
+		uris = [defaultFolder];
+	}
+
+	// otherwise opening the file dialog
+	else {
+		uris = dialog.showOpenDialog({
 			properties: ['openFile', 'openDirectory'],
 			filters: [
 				{
@@ -43,8 +80,9 @@ const openFileOrFolder = (event, defaultFolder) => {
 				// { name: 'Movies', extensions: videoExtensions }
 			]
 		});
+	}
 
-	// if the user cancels, uri will be undefined
+	// if the user cancels, uris will be undefined
 	if (uris) {
 		let uri = uris[0];
 		uri = resolveHome(uri);
@@ -103,6 +141,96 @@ function unregisterShortcuts() {
 	globalShortcut.unregister('Right');
 }
 
+function createMenu() {
+	const template = [
+		{
+			label: 'Viz',
+			submenu: [
+				{
+					label: 'About',
+					click() {
+						dialog.showMessageBox({
+							message: 'Developed with <3 By Fabien & Max'
+						});
+					}
+				},
+				{
+					type: 'separator'
+				},
+				{
+					label: 'Quit',
+					accelerator: 'CmdOrCtrl+Q',
+					click() {
+						app.quit();
+					}
+				}
+			]
+		},
+		{
+			label: 'File',
+			submenu: [
+				{
+					label: 'Open File or Folder',
+					accelerator: 'CmdOrCtrl+O',
+					click() {
+						openFileOrFolder();
+					}
+				},
+				{
+					type: 'separator'
+				},
+				{
+					label: 'Rotate left',
+					accelerator: 'alt+l',
+					click() {
+						// TODO implement
+						dialog.showMessageBox({
+							message: 'rotate left'
+						});
+					}
+				},
+				{
+					label: 'Rotate right',
+					accelerator: 'alt+r',
+					click() {
+						// TODO implement
+						dialog.showMessageBox({
+							message: 'rotate right'
+						});
+					}
+				},
+				{
+					type: 'separator'
+				},
+				{
+					label: 'Delete',
+					accelerator: 'CmdOrCtrl+Delete',
+					click() {
+						// TODO implement
+						dialog.showMessageBox({
+							message: 'delete'
+						});
+					}
+				}
+			]
+		},
+		{
+			role: 'help',
+			submenu: [
+				{
+					label: 'Learn More',
+					click() {
+						shell.openExternal('http://viz.io');
+					}
+				}
+			]
+		}
+	];
+
+	const menu = Menu.buildFromTemplate(template);
+	Menu.setApplicationMenu(menu);
+}
+
 function createWindow() {
 	// Create the browser window.
 	win = new BrowserWindow({
@@ -119,7 +247,8 @@ function createWindow() {
 		isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`
 	);
 
-	// Open the DevTools.
+	// Automatically open the DevTools on start.
+	// XXX uncomment if necessary
 	// win.webContents.openDevTools();
 
 	// Emitted when the window is closed.
@@ -135,6 +264,9 @@ function createWindow() {
 	win.on('focus', registerShortcuts);
 	win.on('blur', unregisterShortcuts);
 
+	// setting up the app menus
+	createMenu();
+
 	// the "open file or folder" dialog can also be triggered from the React app
 	ipcMain.on('openFileOrFolder', openFileOrFolder);
 }
@@ -143,6 +275,18 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
+
+// Listening to the open file event (when the user open a file through the menu bar, or through the OS by double click or similar)
+app.on('open-file', (event, fileOrFolder) => {
+	event.preventDefault();
+	// if the app is ready and initialized, we open this file or folder
+	if (win) {
+		openFileOrFolder(fileOrFolder);
+	} else {
+		// else we store it in a variable, and wait for the app to be ready before opening it
+		openThisFileOrFolderWhenTheWindowIsCreated = fileOrFolder;
+	}
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
