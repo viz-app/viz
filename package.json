@@ -28,11 +28,13 @@
 		"electron": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
 		"electron-local": "electron .",
 		"electron-pack": "build -c.extraMetadata.main=build/start-electron.js",
-		"preelectron-pack": "npm run build"
+		"preelectron-pack": "npm run clean && npm run build",
+		"postelectron-pack": "copy ./dist/mac/*.app /Applications"
 	},
 	"devDependencies": {
 		"babel-eslint": "^8.2.3",
 		"concurrently": "^3.5.1",
+		"copy": "^0.3.2",
 		"electron": "^1.8.4",
 		"electron-builder": "^20.11.1",
 		"eslint": "^4.19.1",
