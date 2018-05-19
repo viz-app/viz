@@ -29,7 +29,8 @@
 		"electron-local": "electron .",
 		"electron-pack": "build -c.extraMetadata.main=build/start-electron.js",
 		"preelectron-pack": "npm run clean && npm run build",
-		"postelectron-pack": "copy ./dist/mac/*.app /Applications"
+		"postelectron-pack": "npm run copy-mac-exe",
+		"copy-mac-exe": "open ./dist/mac"
 	},
 	"devDependencies": {
 		"babel-eslint": "^8.2.3",
@@ -45,6 +46,7 @@
 		"eslint-plugin-react": "^7.7.0",
 		"husky": "^0.14.3",
 		"lint-staged": "^7.0.4",
+		"open": "0.0.5",
 		"prettier": "^1.12.1",
 		"rimraf": "^2.6.2",
 		"wait-on": "^2.1.0"
@@ -71,15 +73,17 @@
 		"directories": {
 			"buildResources": "assets"
 		},
-		"fileAssociations": [{
-			"ext": [
-				"png",
-				"jpeg",
-				"jpg",
-				"gif"
-			],
-			"name": "Image files",
-			"role": "Viewer"
-		}]
+		"fileAssociations": [
+			{
+				"ext": [
+					"png",
+					"jpeg",
+					"jpg",
+					"gif"
+				],
+				"name": "Image files",
+				"role": "Viewer"
+			}
+		]
 	}
 }
