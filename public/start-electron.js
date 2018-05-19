@@ -23,7 +23,8 @@ const resolveHome = filepath => {
 // XXX that might not work so well if we use debug on the client side too. OR maybe it will work ¯\_(ツ)_/¯
 // https://github.com/visionmedia/debug/issues/253#issuecomment-207619335
 const logFile = fs.createWriteStream(resolveHome('~/Library/Logs/viz/log.log'), {
-	flags: 'a'
+	// XXX uncomment to append instead of replace the log file
+	// flags: 'a'
 });
 
 // overrides log function
@@ -57,6 +58,11 @@ const openFileOrFolder = (event, defaultFolder) => {
 	let uris = null;
 
 	logger('openFileOrFolder', 'defaultFolder', defaultFolder);
+	logger(
+		'openFileOrFolder',
+		'openThisFileOrFolderWhenTheWindowIsCreated',
+		openThisFileOrFolderWhenTheWindowIsCreated
+	);
 
 	// if the user opened a file while the app was not running yet
 	if (openThisFileOrFolderWhenTheWindowIsCreated) {
@@ -84,8 +90,10 @@ const openFileOrFolder = (event, defaultFolder) => {
 
 	// if the user cancels, uris will be undefined
 	if (uris) {
+		logger('openFileOrFolder', 'uris', uris);
 		let uri = uris[0];
 		uri = resolveHome(uri);
+		logger('openFileOrFolder', 'uri', uri);
 
 		// preparing our JSON object
 		/*
@@ -278,12 +286,15 @@ app.on('ready', createWindow);
 
 // Listening to the open file event (when the user open a file through the menu bar, or through the OS by double click or similar)
 app.on('open-file', (event, fileOrFolder) => {
+	logger('on open-file', 'fileOrFolder', fileOrFolder);
 	event.preventDefault();
 	// if the app is ready and initialized, we open this file or folder
 	if (win) {
+		logger('on open-file', 'win is defined, we call openFileOrFolder');
 		openFileOrFolder(fileOrFolder);
 	} else {
 		// else we store it in a variable, and wait for the app to be ready before opening it
+		logger('on open-file', 'win is NOT defined, we store it in a variable for now');
 		openThisFileOrFolderWhenTheWindowIsCreated = fileOrFolder;
 	}
 });
@@ -292,7 +303,9 @@ app.on('open-file', (event, fileOrFolder) => {
 app.on('window-all-closed', () => {
 	// On macOS it is common for applications and their menu bar
 	// to stay active until the user quits explicitly with Cmd + Q
+	logger('on window-all-closed', 'checking in MacOS');
 	if (process.platform !== 'darwin') {
+		logger('on window-all-closed', 'yes it was MacOS, calling quit');
 		app.quit();
 	}
 });
@@ -300,7 +313,9 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
 	// On macOS it's common to re-create a window in the app when the
 	// dock icon is clicked and there are no other windows open.
+	logger('on activate', 'checking if win is defined');
 	if (win === null) {
+		logger('on activate', 'yes win is defined, calling createWindow');
 		createWindow();
 	}
 });
