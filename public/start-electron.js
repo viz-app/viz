@@ -133,12 +133,22 @@ function registerShortcuts() {
 		// sending to renderer process
 		win.webContents.send('rightKeyPressed');
 	});
+	globalShortcut.register('CommandOrControl+[', () => {
+		// sending to renderer process
+		win.webContents.send('RotateLeft');
+	});
+	globalShortcut.register('CommandOrControl+]', () => {
+		// sending to renderer process
+		win.webContents.send('RotateRight');
+	});
 }
 
 function unregisterShortcuts() {
 	globalShortcut.unregister('CommandOrControl+O');
 	globalShortcut.unregister('Left');
 	globalShortcut.unregister('Right');
+	globalShortcut.unregister('CommandOrControl+[');
+	globalShortcut.unregister('CommandOrControl+]');
 }
 
 function createMenu() {
@@ -181,22 +191,16 @@ function createMenu() {
 				},
 				{
 					label: 'Rotate left',
-					accelerator: 'alt+l',
+					accelerator: 'command+[',
 					click() {
-						// TODO implement
-						dialog.showMessageBox({
-							message: 'rotate left'
-						});
+						win.webContents.send('RotateLeft');
 					}
 				},
 				{
 					label: 'Rotate right',
-					accelerator: 'alt+r',
+					accelerator: 'command+]',
 					click() {
-						// TODO implement
-						dialog.showMessageBox({
-							message: 'rotate right'
-						});
+						win.webContents.send('RotateRight');
 					}
 				},
 				{

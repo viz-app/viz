@@ -71,6 +71,16 @@ class App extends React.Component {
 			// linking the right key to an index increment
 			this.incrIndex();
 		});
+		ipcRenderer.on('RotateLeft', (event, arg) => {
+			console.log(`Command+[ pressed ${arg}`);
+			// linking command+[ to a Left Rotation
+			this.rotateImage(false);
+		});
+		ipcRenderer.on('RotateRight', (event, arg) => {
+			console.log(`Command+] pressed ${arg}`);
+			// linking command+[ to a Left Rotation
+			this.rotateImage(true);
+		});
 
 		init().then(() => {
 			getUserPreference(DELETE_NO_CONFIRMATION).then(deleteNoConfirmation =>
