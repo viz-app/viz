@@ -6,11 +6,12 @@
 	"main": "public/start-electron.js",
 	"homepage": "./",
 	"dependencies": {
+		"debug": "^3.1.0",
 		"dexie": "^2.0.3",
 		"electron-is-dev": "^0.3.0",
 		"immutable": "^3.8.2",
-		"prop-types": "^15.6.1",
 		"platform": "^1.3.5",
+		"prop-types": "^15.6.1",
 		"react": "^16.3.2",
 		"react-dom": "^16.3.2",
 		"react-scripts": "1.1.4",
@@ -27,11 +28,14 @@
 		"electron": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
 		"electron-local": "electron .",
 		"electron-pack": "build -c.extraMetadata.main=build/start-electron.js",
-		"preelectron-pack": "npm run build"
+		"preelectron-pack": "npm run clean && npm run build",
+		"postelectron-pack": "npm run copy-mac-exe",
+		"copy-mac-exe": "open ./dist/mac"
 	},
 	"devDependencies": {
 		"babel-eslint": "^8.2.3",
 		"concurrently": "^3.5.1",
+		"copy": "^0.3.2",
 		"electron": "^1.8.4",
 		"electron-builder": "^20.11.1",
 		"eslint": "^4.19.1",
@@ -42,6 +46,7 @@
 		"eslint-plugin-react": "^7.7.0",
 		"husky": "^0.14.3",
 		"lint-staged": "^7.0.4",
+		"open": "0.0.5",
 		"prettier": "^1.12.1",
 		"rimraf": "^2.6.2",
 		"wait-on": "^2.1.0"
@@ -68,10 +73,17 @@
 		"directories": {
 			"buildResources": "assets"
 		},
-		"fileAssociations": [{
-			"ext": ["png", "jpeg", "jpg", "gif"],
-			"name": "Image files",
-			"role": "Viewer"
-		}]
+		"fileAssociations": [
+			{
+				"ext": [
+					"png",
+					"jpeg",
+					"jpg",
+					"gif"
+				],
+				"name": "Image files",
+				"role": "Viewer"
+			}
+		]
 	}
 }
