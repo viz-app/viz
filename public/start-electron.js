@@ -288,14 +288,14 @@ app.on('ready', createWindow);
 app.on('open-file', (event, fileOrFolder) => {
 	logger('on open-file', 'fileOrFolder', fileOrFolder);
 	event.preventDefault();
-	// if the app is ready and initialized, we open this file or folder
+
+	// we need to store this value in a variable, because the app might not be ready yet
+	openThisFileOrFolderWhenTheWindowIsCreated = fileOrFolder;
+
+	// if the app is ready and initialized, we open this file or folder (and it will open the file from the variable)
 	if (win) {
 		logger('on open-file', 'win is defined, we call openFileOrFolder');
 		openFileOrFolder(fileOrFolder);
-	} else {
-		// else we store it in a variable, and wait for the app to be ready before opening it
-		logger('on open-file', 'win is NOT defined, we store it in a variable for now');
-		openThisFileOrFolderWhenTheWindowIsCreated = fileOrFolder;
 	}
 });
 
