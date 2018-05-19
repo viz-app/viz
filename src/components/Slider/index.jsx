@@ -10,6 +10,7 @@ const Slider = () => (
 				const imagesLinks = filesInFolder.map((imageAddress, fileIndex) => (
 					// creating a sliderItem component for each image. It allows to manage it individually, for example to give it focus.
 					<SliderItem
+						key={`file://${folder}/${imageAddress}`}
 						currentFocusIndex={currentFileIndex}
 						thisFileIndex={fileIndex}
 						onSliderClick={onSliderClick}

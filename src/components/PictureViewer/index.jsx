@@ -8,8 +8,15 @@ import FileInfoContext from './../../FileInfoContext';
 class PictureViewer extends React.Component {
 	constructor(props) {
 		super(props);
-		this.itemRef = React.createRef();
+		this.viewerRef = React.createRef();
+		// this.imgRef = React.createRef();
 	}
+
+	// isScalingNeeded(currentFileRotation) {
+	// 	return this.imgRef.clientWidth >= this.viewerRef.current.getBoundingClientRect().height
+	// 		? currentFileRotation === 90 || currentFileRotation === 270
+	// 		: false;
+	// }
 
 	render() {
 		return (
@@ -24,14 +31,17 @@ class PictureViewer extends React.Component {
 						onLeftArrow,
 						onRightArrow
 					}) => (
-						<div className="bufferDiv" ref={this.itemRef}>
+						<div className="bufferDiv" ref={this.viewerRef}>
 							<img
+								// ref={this.imgRef}
 								className={`rotate${currentFileRotation}`}
 								style={{
 									transform: `scale(${
+										// this.imgRef.clientWidth >=
+										// this.viewerRef.current.getBoundingClientRect().height &&
 										currentFileRotation === 90 || currentFileRotation === 270
-											? this.itemRef.current.getBoundingClientRect().height /
-											  this.itemRef.current.getBoundingClientRect().width
+											? this.viewerRef.current.getBoundingClientRect().height /
+											  this.viewerRef.current.getBoundingClientRect().width
 											: 1
 									} ) rotate(${currentFileRotation}deg)`
 								}}
