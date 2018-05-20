@@ -14,6 +14,7 @@ import {
 	getUserPreference
 } from './helpers/IndexedDB';
 import LeftBarHandlersContext from './LeftBarHandlersContext';
+import RightBarHandlersContext from './RightBarHandlersContext';
 
 const electron = window.require('electron');
 // const fs = electron.remote.require('fs');
@@ -28,6 +29,7 @@ class App extends React.Component {
 			fileInfo: {
 				folder: null,
 				currentFileIndex: 0,
+				currentFileRotation: 0,
 				filesInFolder: [],
 				onLeftArrow: this.decrIndex,
 				onSliderClick: this.changeIndex,
@@ -37,6 +39,9 @@ class App extends React.Component {
 			defaultPicturePath: null,
 			leftBarHandlers: {
 				openHandler: this.openFileOrFolder
+			},
+			rightBarHandlers: {
+				rotateHandler: this.rotateImage
 			}
 		};
 	}
@@ -48,6 +53,7 @@ class App extends React.Component {
 			console.log(`file selected by user ${JSON.stringify(arg)}`);
 
 			this.setState({
+				// TODO add the current rotation (fetch it in the indexedDB)
 				fileInfo: fileInfoCopy
 					.set('folder', arg.folder)
 					.set('currentFileIndex', arg.currentFileIndex)
@@ -64,6 +70,16 @@ class App extends React.Component {
 			console.log(`Right key pressed ${arg}`);
 			// linking the right key to an index increment
 			this.incrIndex();
+		});
+		ipcRenderer.on('RotateLeft', (event, arg) => {
+			console.log(`Command+[ pressed ${arg}`);
+			// linking command+[ to a Left Rotation
+			this.rotateImage(false);
+		});
+		ipcRenderer.on('RotateRight', (event, arg) => {
+			console.log(`Command+] pressed ${arg}`);
+			// linking command+] to a Right Rotation
+			this.rotateImage(true);
 		});
 
 		init().then(() => {
@@ -91,7 +107,13 @@ class App extends React.Component {
 		// managing the edge case, then the usual case
 		incrementedIndex = ++incrementedIndex % this.state.fileInfo.filesInFolder.length;
 		// setting the state with a modified fileInfoCopy
-		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', incrementedIndex).toJS() });
+		// TODO update it to fetch rotate value in indexedDB
+		this.setState({
+			fileInfo: fileInfoCopy
+				.set('currentFileIndex', incrementedIndex)
+				.set('currentFileRotation', 0)
+				.toJS()
+		});
 	};
 
 	/**
@@ -106,7 +128,12 @@ class App extends React.Component {
 		decrementedIndex =
 			decrementedIndex === 0 ? this.state.fileInfo.filesInFolder.length - 1 : --decrementedIndex;
 		// setting the state with a modified fileInfoCopy
-		this.setState({ fileInfo: fileInfoCopy.set('currentFileIndex', decrementedIndex).toJS() });
+		this.setState({
+			fileInfo: fileInfoCopy
+				.set('currentFileIndex', decrementedIndex)
+				.set('currentFileRotation', 0)
+				.toJS()
+		});
 	};
 
 	changeIndex = newIndex => {
@@ -120,6 +147,23 @@ class App extends React.Component {
 		ipcRenderer.send('openFileOrFolder');
 	};
 
+	// function to handle image rotation
+	rotateImage = isRotateRight => {
+		// creating an immutable object from fileInfo
+		const fileInfoCopy = fromJS(this.state.fileInfo);
+		// based on whether it shall turn right or left, it sets the state to the correct value
+		let currentRotation = fileInfoCopy.get('currentFileRotation');
+		if (isRotateRight) {
+			currentRotation = (currentRotation + 90) % 360;
+		} else {
+			currentRotation = currentRotation - 90 === -90 ? 270 : currentRotation - 90;
+		}
+
+		this.setState({ fileInfo: fileInfoCopy.set('currentFileRotation', currentRotation).toJS() });
+		// TODO store the rotation state in indexedDB
+		// TODO add a rotation function that takes the angle as an argument for loading from indexedDB purpose
+	};
+
 	render() {
 		return (
 			<FileInfoContext.Provider value={this.state.fileInfo}>
@@ -128,7 +172,9 @@ class App extends React.Component {
 					<LeftBarHandlersContext.Provider value={this.state.leftBarHandlers}>
 						<NavLeft />
 					</LeftBarHandlersContext.Provider>
-					<NavRight />
+					<RightBarHandlersContext.Provider value={this.state.rightBarHandlers}>
+						<NavRight />
+					</RightBarHandlersContext.Provider>
 					<Slider />
 					{/* TODO remove this next div, it is just here for debugging purpose */}
 					<div style={{ display: 'none' }}>{JSON.stringify(this.state)}</div>
