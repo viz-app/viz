@@ -78,7 +78,7 @@ class App extends React.Component {
 		});
 		ipcRenderer.on('RotateRight', (event, arg) => {
 			console.log(`Command+] pressed ${arg}`);
-			// linking command+[ to a Left Rotation
+			// linking command+] to a Right Rotation
 			this.rotateImage(true);
 		});
 
@@ -107,7 +107,7 @@ class App extends React.Component {
 		// managing the edge case, then the usual case
 		incrementedIndex = ++incrementedIndex % this.state.fileInfo.filesInFolder.length;
 		// setting the state with a modified fileInfoCopy
-		// TODO update it to fetch rotate value in indexedDB, and store the previous one
+		// TODO update it to fetch rotate value in indexedDB
 		this.setState({
 			fileInfo: fileInfoCopy
 				.set('currentFileIndex', incrementedIndex)
@@ -160,6 +160,8 @@ class App extends React.Component {
 		}
 
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileRotation', currentRotation).toJS() });
+		// TODO store the rotation state in indexedDB
+		// TODO add a rotation function that takes the angle as an argument for loading from indexedDB purpose
 	};
 
 	render() {

@@ -9,14 +9,7 @@ class PictureViewer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.viewerRef = React.createRef();
-		// this.imgRef = React.createRef();
 	}
-
-	// isScalingNeeded(currentFileRotation) {
-	// 	return this.imgRef.clientWidth >= this.viewerRef.current.getBoundingClientRect().height
-	// 		? currentFileRotation === 90 || currentFileRotation === 270
-	// 		: false;
-	// }
 
 	render() {
 		return (
@@ -61,40 +54,5 @@ class PictureViewer extends React.Component {
 		);
 	}
 }
-
-// const PictureViewer = () => (
-// 	<div className="pictureViewer">
-// 		{/* creating a consumer for the context to display the current image */}
-// 		<FileInfoContext.Consumer>
-// 			{({
-// 				folder,
-// 				currentFileIndex,
-// 				currentFileRotation,
-// 				filesInFolder,
-// 				onLeftArrow,
-// 				onRightArrow
-// 			}) => (
-// 				<div className="bufferDiv">
-// 					<div className="arrow left-arrow" onClick={onLeftArrow} role="button" tabIndex="0">
-// 						<FontIcon className="icon" value="keyboard_arrow_left" />
-// 					</div>
-// 					<img
-// 						className={`rotate${currentFileRotation}`}
-// 						style={{
-// 							transform: `scale(${
-// 								currentFileRotation === 90 || currentFileRotation === 270 ? 0.5 : 1
-// 							} ) rotate(${currentFileRotation}deg)`
-// 						}}
-// 						alt={`some picz ${currentFileIndex}`}
-// 						src={`file://${folder}/${filesInFolder[currentFileIndex]}`}
-// 					/>
-// 					<div className="arrow right-arrow" onClick={onRightArrow} role="button" tabIndex="0">
-// 						<FontIcon className="icon" value="keyboard_arrow_right" />
-// 					</div>
-// 				</div>
-// 			)}
-// 		</FileInfoContext.Consumer>
-// 	</div>
-// );
 
 export default PictureViewer;
