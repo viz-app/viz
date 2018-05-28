@@ -81,6 +81,14 @@ class App extends React.Component {
 			// linking command+] to a Right Rotation
 			this.rotateImage(true);
 		});
+		ipcRenderer.on('Delete', () => {
+			ipcRenderer.send(
+				'deleteImage',
+				`${this.state.fileInfo.folder}/${
+					this.state.fileInfo.filesInFolder[this.state.fileInfo.currentFileIndex]
+				}`
+			);
+		});
 
 		init().then(() => {
 			getUserPreference(DELETE_NO_CONFIRMATION).then(deleteNoConfirmation =>

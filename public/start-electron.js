@@ -128,6 +128,11 @@ const openFileOrFolder = (event, defaultFolder) => {
 	}
 };
 
+const deleteImage = (event, filepath) => {
+	console.log(filepath);
+	console.log(shell.moveItemToTrash(filepath));
+};
+
 function registerShortcuts() {
 	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
 	globalShortcut.register('CommandOrControl+O', openFileOrFolder);
@@ -219,9 +224,7 @@ function createMenu() {
 					accelerator: 'CmdOrCtrl+Delete',
 					click() {
 						// TODO implement
-						dialog.showMessageBox({
-							message: 'delete'
-						});
+						win.webContents.send('Delete');
 					}
 				}
 			]
@@ -261,7 +264,7 @@ function createWindow() {
 
 	// Automatically open the DevTools on start.
 	// XXX uncomment if necessary
-	// win.webContents.openDevTools();
+	win.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	win.on('closed', () => {
@@ -281,6 +284,7 @@ function createWindow() {
 
 	// the "open file or folder" dialog can also be triggered from the React app
 	ipcMain.on('openFileOrFolder', openFileOrFolder);
+	ipcMain.on('deleteImage', deleteImage);
 }
 
 // This method will be called when Electron has finished
