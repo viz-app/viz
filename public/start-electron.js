@@ -1,3 +1,5 @@
+// @flow
+
 // we had to place this file in `public` for the bundler
 /* eslint-disable import/no-extraneous-dependencies */
 const { app, BrowserWindow, globalShortcut, dialog, ipcMain, Menu, shell } = require('electron');
@@ -13,7 +15,7 @@ const util = require('util');
  * @param {*} filepath
  */
 const resolveHome = filepath => {
-	if (filepath[0] === '~') {
+	if (filepath[0] === '~' && process.env.HOME) {
 		return path.join(process.env.HOME, filepath.slice(1));
 	}
 	return filepath;
@@ -268,7 +270,7 @@ function createWindow() {
 		// Dereference the window object, usually you would store windows
 		// in an array if your app supports multi windows, this is the time
 		// when you should delete the corresponding element.
-		win = null;
+		win = { webContents: () => {} }; // replacing with a placeholder to prevent a flow error
 	});
 
 	// registering / unregistering shortcuts when necessary
