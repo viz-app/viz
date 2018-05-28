@@ -30,7 +30,7 @@ const logFile = fs.createWriteStream(resolveHome('~/Library/Logs/viz/log.log'), 
 // overrides log function
 debug.log = (...args) => {
 	const str = `${util.format.apply(null, args)}\n`;
-	console.log(str);
+	// console.log(str);
 	logFile.write(str);
 };
 
