@@ -5,6 +5,16 @@
 	user-select: none;
 }
 
+.noImage {
+	color: white;
+	height: 100%;
+	display: flex;
+	/* Vertical center alignment */
+	align-items: center;
+	/* Horizontal center alignment */
+	justify-content: center;
+}
+
 .bufferDiv {
 	background-color: #1c313a;
 	height: 100%;
@@ -56,4 +66,3 @@
 .pictureViewer .arrow:hover {
 	opacity: 0.8;
 }
-

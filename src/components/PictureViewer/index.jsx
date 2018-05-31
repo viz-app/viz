@@ -23,32 +23,42 @@ class PictureViewer extends React.Component {
 						filesInFolder,
 						onLeftArrow,
 						onRightArrow
-					}) => (
-						<div className="bufferDiv" ref={this.viewerRef}>
-							<img
-								// TODO see if it is possible to scale only when necessary (image would go out of window)
-								className={`rotate${currentFileRotation}`}
-								style={{
-									transform: `scale(${
-										// this piece of code scales the image to fit in the screen
-										// getBoundingClientRect() is a native API to get the size of an element
-										currentFileRotation === 90 || currentFileRotation === 270
-											? this.viewerRef.current.getBoundingClientRect().height /
-											  this.viewerRef.current.getBoundingClientRect().width
-											: 1
-									} ) rotate(${currentFileRotation}deg)`
-								}}
-								alt={`some picz ${currentFileIndex}`}
-								src={`file://${folder}/${filesInFolder[currentFileIndex]}`}
-							/>
-							<div className="arrow left-arrow" onClick={onLeftArrow} role="button" tabIndex="0">
-								<FontIcon className="icon" value="keyboard_arrow_left" />
+					}) => {
+						if (filesInFolder.length === 0) {
+							return <div className="noImage">No image found in {folder}</div>;
+						}
+						return (
+							<div className="bufferDiv" ref={this.viewerRef}>
+								<img
+									// TODO see if it is possible to scale only when necessary (image would go out of window)
+									className={`rotate${currentFileRotation}`}
+									style={{
+										transform: `scale(${
+											// this piece of code scales the image to fit in the screen
+											// getBoundingClientRect() is a native API to get the size of an element
+											currentFileRotation === 90 || currentFileRotation === 270
+												? this.viewerRef.current.getBoundingClientRect().height /
+												  this.viewerRef.current.getBoundingClientRect().width
+												: 1
+										} ) rotate(${currentFileRotation}deg)`
+									}}
+									alt={`some picz ${currentFileIndex}`}
+									src={`file://${folder}/${filesInFolder[currentFileIndex]}`}
+								/>
+								<div className="arrow left-arrow" onClick={onLeftArrow} role="button" tabIndex="0">
+									<FontIcon className="icon" value="keyboard_arrow_left" />
+								</div>
+								<div
+									className="arrow right-arrow"
+									onClick={onRightArrow}
+									role="button"
+									tabIndex="0"
+								>
+									<FontIcon className="icon" value="keyboard_arrow_right" />
+								</div>
 							</div>
-							<div className="arrow right-arrow" onClick={onRightArrow} role="button" tabIndex="0">
-								<FontIcon className="icon" value="keyboard_arrow_right" />
-							</div>
-						</div>
-					)}
+						);
+					}}
 				</FileInfoContext.Consumer>
 			</div>
 		);
