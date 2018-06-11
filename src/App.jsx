@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { fromJS } from 'immutable';
 
@@ -20,8 +22,30 @@ const electron = window.require('electron');
 // const fs = electron.remote.require('fs');
 const { ipcRenderer } = electron;
 
-class App extends React.Component {
-	constructor(props) {
+type Props = {};
+
+type State = {
+	fileInfo: {
+		folder: ?string,
+		currentFileIndex: number,
+		currentFileRotation: number,
+		filesInFolder: Array<string>,
+		onLeftArrow: Function,
+		onSliderClick: Function,
+		onRightArrow: Function
+	},
+	deleteNoConfirmation: boolean,
+	defaultPicturePath: ?string,
+	leftBarHandlers: {
+		openHandler: Function
+	},
+	rightBarHandlers: {
+		rotateHandler: Function
+	}
+};
+
+class App extends React.Component<Props, State> {
+	constructor(props: Props) {
 		super(props);
 
 		this.state = {
@@ -136,7 +160,7 @@ class App extends React.Component {
 		});
 	};
 
-	changeIndex = newIndex => {
+	changeIndex = (newIndex: number) => {
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
 		// setting the state with a modified fileInfoCopy
@@ -148,7 +172,7 @@ class App extends React.Component {
 	};
 
 	// function to handle image rotation
-	rotateImage = isRotateRight => {
+	rotateImage = (isRotateRight: boolean) => {
 		// creating an immutable object from fileInfo
 		const fileInfoCopy = fromJS(this.state.fileInfo);
 		// based on whether it shall turn right or left, it sets the state to the correct value
