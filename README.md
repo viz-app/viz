@@ -11,6 +11,19 @@ There is no good default image viewer for MacOS (you need to open images one by 
 `npm i` <br>
 `npm run electron`
 
+## Setting up flow
+
+### VS code
+
+Search and install `flowtype.flow-for-vscode`.
+
+In the user settings, add these two lines
+
+```
+    "flow.pathToFlow":"${workspaceRoot}/node_modules/.bin/flow",
+    "javascript.validate.enable": false
+```
+
 ## Debugging the app "in production" (a bundled exec of the app)
 
 ### MacOS
