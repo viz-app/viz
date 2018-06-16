@@ -1,3 +1,5 @@
+// @flow
+
 import Dexie from 'dexie';
 import platform from 'platform';
 
@@ -52,7 +54,7 @@ const init = () => {
  * @param {*} userPrefKey The user preference key (e.g. IndexedDB.DELETE_NO_CONFIRMATION).
  * @returns A promise resolving the user pref value.
  */
-const getUserPreference = userPrefKey =>
+const getUserPreference = (userPrefKey: string) =>
 	db.prefs.get({ key: userPrefKey }).then(pref => pref && pref.value);
 
 /**
@@ -61,7 +63,7 @@ const getUserPreference = userPrefKey =>
  * @param {*} value The value we need to set for this preference.
  * @returns A promise resolving when the value is updated.
  */
-const setUserPreference = (key, value) => {
+const setUserPreference = (key: string, value: string) => {
 	db.prefs.update(key, { value });
 };
 
@@ -71,7 +73,7 @@ const setUserPreference = (key, value) => {
  * Helper to get the current rotation of an image.
  * @param {*} filePath
  */
-const getImageRotation = (folderPath, fileName) =>
+const getImageRotation = (folderPath: string, fileName: string) =>
 	db.rotation.where({ folderPath, fileName }).then(result => result.rotation);
 
 /**
@@ -80,7 +82,7 @@ const getImageRotation = (folderPath, fileName) =>
  * @param {*} fileName The image name.
  * @param {*} rotation The rotation set by the user.
  */
-const setImageRotation = (folderPath, fileName, rotation) => {
+const setImageRotation = (folderPath: string, fileName: string, rotation: number) => {
 	db.prefs.update({ folderPath, fileName }, { rotation });
 };
 
@@ -89,7 +91,7 @@ const setImageRotation = (folderPath, fileName, rotation) => {
  * @param {*} folderPath The abosulte URI of the folder containing the images.
  * @returns An array of image rotations.
  */
-const getFolderRotations = folderPath => db.rotation.where({ folderPath }).toArray();
+const getFolderRotations = (folderPath: string) => db.rotation.where({ folderPath }).toArray();
 
 export {
 	DELETE_NO_CONFIRMATION,
