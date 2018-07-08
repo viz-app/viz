@@ -8,9 +8,9 @@ import RightBarHandlersContext from './../../RightBarHandlersContext';
 const NavRight = () => (
 	<div className="navRight">
 		<RightBarHandlersContext.Consumer>
-			{({ rotateHandler }) => (
+			{({ rotateHandler, deleteHandler }) => (
 				<span>
-					<FontIcon className="icon" value="delete" />
+					<FontIcon className="icon" value="delete" onClick={deleteHandler} />
 					{/* XXX re-enable when we're ready */}
 					{/* <FontIcon className="icon" value="share" /> */}
 					<FontIcon
