@@ -127,6 +127,20 @@ const openFileOrFolder = (event, defaultFolder) => {
 		win.webContents.send('fileSelectedByUser', payload);
 	}
 };
+/**
+ * @param  {} event
+ * @param  {} {filepath the path of the file to be deleted
+ * @param  {} index} the index of the file in the array of images in the react app, it needs to be passed for the react app to be able to remove the image from the view
+ */
+const deleteImage = (event, { filepath, index }) => {
+	if (shell.moveItemToTrash(filepath)) {
+		win.webContents.send('imageDeleted', index);
+	} else {
+		// in case the deletion went wrong, not handled by the UI
+		// TODO handle this event properly in the UI, displaying a notification to the user.
+		win.webContents.send('imageDeletionFailure', index);
+	}
+};
 
 function registerShortcuts() {
 	// Register a 'CommandOrControl+O' shortcut listener to open a file or folder.
@@ -149,6 +163,10 @@ function registerShortcuts() {
 		// sending to renderer process
 		win.webContents.send('RotateRight');
 	});
+	globalShortcut.register('CommandOrControl+Backspace', () => {
+		// sending to renderer process
+		win.webContents.send('requestToDeleteCurrentFile');
+	});
 }
 
 function unregisterShortcuts() {
@@ -157,6 +175,7 @@ function unregisterShortcuts() {
 	globalShortcut.unregister('Right');
 	globalShortcut.unregister('CommandOrControl+[');
 	globalShortcut.unregister('CommandOrControl+]');
+	globalShortcut.unregister('CommandOrControl+Backspace');
 }
 
 function createMenu() {
@@ -216,12 +235,10 @@ function createMenu() {
 				},
 				{
 					label: 'Delete',
-					accelerator: 'CmdOrCtrl+Delete',
+					accelerator: 'CmdOrCtrl+Backspace',
 					click() {
-						// TODO implement
-						dialog.showMessageBox({
-							message: 'delete'
-						});
+						// it sends an event to the React App to get the information about the current file
+						win.webContents.send('requestToDeleteCurrentFile');
 					}
 				}
 			]
@@ -281,6 +298,9 @@ function createWindow() {
 
 	// the "open file or folder" dialog can also be triggered from the React app
 	ipcMain.on('openFileOrFolder', openFileOrFolder);
+
+	// the message comes with the information about the image to delete
+	ipcMain.on('deleteImage', deleteImage);
 }
 
 // This method will be called when Electron has finished
