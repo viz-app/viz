@@ -127,7 +127,11 @@ const openFileOrFolder = (event, defaultFolder) => {
 		win.webContents.send('fileSelectedByUser', payload);
 	}
 };
-
+/**
+ * @param  {} event
+ * @param  {} {filepath the path of the file to be deleted
+ * @param  {} index} the index of the file in the array of images in the react app, it needs to be passed for the react app to be able to remove the image from the view
+ */
 const deleteImage = (event, { filepath, index }) => {
 	if (shell.moveItemToTrash(filepath)) {
 		win.webContents.send('imageDeleted', index);
@@ -161,7 +165,7 @@ function registerShortcuts() {
 	});
 	globalShortcut.register('CommandOrControl+Backspace', () => {
 		// sending to renderer process
-		win.webContents.send('Delete');
+		win.webContents.send('requestToDeleteCurrentFile');
 	});
 }
 
@@ -234,7 +238,7 @@ function createMenu() {
 					accelerator: 'CmdOrCtrl+Backspace',
 					click() {
 						// it sends an event to the React App to get the information about the current file
-						win.webContents.send('Delete');
+						win.webContents.send('requestToDeleteCurrentFile');
 					}
 				}
 			]

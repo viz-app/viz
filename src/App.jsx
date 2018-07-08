@@ -82,13 +82,13 @@ class App extends React.Component {
 			// linking command+] to a Right Rotation
 			this.rotateImage(true);
 		});
-		ipcRenderer.on('Delete', this.deleteImage);
+		ipcRenderer.on('requestToDeleteCurrentFile', this.deleteImage);
 		ipcRenderer.on('imageDeleted', (event, arg) => {
 			// the argument is the index of the file that was correctly deleted
 			const fileInfoCopy = fromJS(this.state.fileInfo);
 			const filesInFolderCopy = fromJS(this.state.fileInfo.filesInFolder);
 
-			// check if the index is the last one
+			// if the current picture is not the last one, move to next picture, else move to previous picture
 			const nextIndex =
 				this.state.fileInfo.currentFileIndex === this.state.fileInfo.filesInFolder.length - 1
 					? this.state.fileInfo.filesInFolder.length - 2
