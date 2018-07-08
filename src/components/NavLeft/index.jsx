@@ -10,7 +10,8 @@ const NavLeft = () => (
 			{({ openHandler }) => (
 				<span>
 					<FontIcon className="icon" value="folder_open" onClick={openHandler} />
-					<FontIcon className="icon" value="settings" />
+					{/* XXX re-enable when we're ready */}
+					{/* <FontIcon className="icon" value="settings" /> */}
 				</span>
 			)}
 		</LeftBarHandlersContext.Consumer>
