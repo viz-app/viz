@@ -31,7 +31,6 @@ class PictureViewer extends React.Component {
 							<div className="bufferDiv" ref={this.viewerRef}>
 								<img
 									// TODO see if it is possible to scale only when necessary (image would go out of window)
-									className={`rotate${currentFileRotation}`}
 									style={{
 										transform: `scale(${
 											// this piece of code scales the image to fit in the screen

@@ -11,7 +11,8 @@ const NavRight = () => (
 			{({ rotateHandler, deleteHandler }) => (
 				<span>
 					<FontIcon className="icon" value="delete" onClick={deleteHandler} />
-					<FontIcon className="icon" value="share" />
+					{/* XXX re-enable when we're ready */}
+					{/* <FontIcon className="icon" value="share" /> */}
 					<FontIcon
 						className="icon"
 						value="rotate_left"

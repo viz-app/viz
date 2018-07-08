@@ -43,7 +43,7 @@ debug.enable('viz');
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 
-const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 // const videoExtensions = ['mkv', 'avi', 'mp4'];
 
 // this will have a value when the user open a file when the app is not running yet
@@ -114,7 +114,7 @@ const openFileOrFolder = (event, defaultFolder) => {
 			folder,
 			filesInFolder: fs.readdirSync(folder).filter(image => {
 				const imageExtension = path.extname(image).replace('.', '');
-				return imageExtensions.indexOf(imageExtension) !== -1;
+				return imageExtensions.indexOf(imageExtension.toLowerCase()) !== -1;
 			})
 		};
 
