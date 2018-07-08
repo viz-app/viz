@@ -82,12 +82,32 @@ class App extends React.Component {
 			this.rotateImage(true);
 		});
 		ipcRenderer.on('Delete', () => {
-			ipcRenderer.send(
-				'deleteImage',
-				`${this.state.fileInfo.folder}/${
+			ipcRenderer.send('deleteImage', {
+				filepath: `${this.state.fileInfo.folder}/${
 					this.state.fileInfo.filesInFolder[this.state.fileInfo.currentFileIndex]
-				}`
-			);
+				}`,
+				index: this.state.fileInfo.currentFileIndex
+			});
+		});
+		ipcRenderer.on('imageDeleted', (event, arg) => {
+			// the argument is the index of the file that was correctly deleted
+			const fileInfoCopy = fromJS(this.state.fileInfo);
+			const filesInFolderCopy = fromJS(this.state.fileInfo.filesInFolder);
+
+			// check if the index is the last one
+			const nextIndex =
+				this.state.fileInfo.currentFileIndex === this.state.fileInfo.filesInFolder.length - 1
+					? this.state.fileInfo.filesInFolder.length - 2
+					: this.state.fileInfo.currentFileIndex;
+
+			console.log(nextIndex);
+
+			this.setState({
+				fileInfo: fileInfoCopy
+					.set('filesInFolder', filesInFolderCopy.deleteIn([arg]).toJS())
+					.set('currentFileIndex', nextIndex)
+					.toJS()
+			});
 		});
 
 		init().then(() => {

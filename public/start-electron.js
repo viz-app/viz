@@ -128,9 +128,12 @@ const openFileOrFolder = (event, defaultFolder) => {
 	}
 };
 
-const deleteImage = (event, filepath) => {
-	console.log(filepath);
-	console.log(shell.moveItemToTrash(filepath));
+const deleteImage = (event, { filepath, index }) => {
+	if (shell.moveItemToTrash(filepath)) {
+		win.webContents.send('imageDeleted', index);
+	} else {
+		win.webContents.send('imageDeletionFailure', index);
+	}
 };
 
 function registerShortcuts() {
@@ -223,7 +226,7 @@ function createMenu() {
 					label: 'Delete',
 					accelerator: 'CmdOrCtrl+Delete',
 					click() {
-						// TODO implement
+						// it sends an event to the React App to get the information about the current file
 						win.webContents.send('Delete');
 					}
 				}
@@ -284,6 +287,8 @@ function createWindow() {
 
 	// the "open file or folder" dialog can also be triggered from the React app
 	ipcMain.on('openFileOrFolder', openFileOrFolder);
+
+	// the message comes with the information about the image to delete
 	ipcMain.on('deleteImage', deleteImage);
 }
 
