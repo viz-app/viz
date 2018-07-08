@@ -41,7 +41,8 @@ class App extends React.Component {
 				openHandler: this.openFileOrFolder
 			},
 			rightBarHandlers: {
-				rotateHandler: this.rotateImage
+				rotateHandler: this.rotateImage,
+				deleteHandler: this.deleteImage
 			}
 		};
 	}
@@ -81,14 +82,7 @@ class App extends React.Component {
 			// linking command+] to a Right Rotation
 			this.rotateImage(true);
 		});
-		ipcRenderer.on('Delete', () => {
-			ipcRenderer.send('deleteImage', {
-				filepath: `${this.state.fileInfo.folder}/${
-					this.state.fileInfo.filesInFolder[this.state.fileInfo.currentFileIndex]
-				}`,
-				index: this.state.fileInfo.currentFileIndex
-			});
-		});
+		ipcRenderer.on('Delete', this.deleteImage);
 		ipcRenderer.on('imageDeleted', (event, arg) => {
 			// the argument is the index of the file that was correctly deleted
 			const fileInfoCopy = fromJS(this.state.fileInfo);
@@ -99,8 +93,6 @@ class App extends React.Component {
 				this.state.fileInfo.currentFileIndex === this.state.fileInfo.filesInFolder.length - 1
 					? this.state.fileInfo.filesInFolder.length - 2
 					: this.state.fileInfo.currentFileIndex;
-
-			console.log(nextIndex);
 
 			this.setState({
 				fileInfo: fileInfoCopy
@@ -190,6 +182,15 @@ class App extends React.Component {
 		this.setState({ fileInfo: fileInfoCopy.set('currentFileRotation', currentRotation).toJS() });
 		// TODO store the rotation state in indexedDB
 		// TODO add a rotation function that takes the angle as an argument for loading from indexedDB purpose
+	};
+
+	deleteImage = () => {
+		ipcRenderer.send('deleteImage', {
+			filepath: `${this.state.fileInfo.folder}/${
+				this.state.fileInfo.filesInFolder[this.state.fileInfo.currentFileIndex]
+			}`,
+			index: this.state.fileInfo.currentFileIndex
+		});
 	};
 
 	render() {

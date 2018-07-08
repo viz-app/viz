@@ -132,6 +132,8 @@ const deleteImage = (event, { filepath, index }) => {
 	if (shell.moveItemToTrash(filepath)) {
 		win.webContents.send('imageDeleted', index);
 	} else {
+		// in case the deletion went wrong, not handled by the UI
+		// TODO handle this event properly in the UI, displaying a notification to the user.
 		win.webContents.send('imageDeletionFailure', index);
 	}
 };
@@ -157,6 +159,10 @@ function registerShortcuts() {
 		// sending to renderer process
 		win.webContents.send('RotateRight');
 	});
+	globalShortcut.register('CommandOrControl+Backspace', () => {
+		// sending to renderer process
+		win.webContents.send('Delete');
+	});
 }
 
 function unregisterShortcuts() {
@@ -165,6 +171,7 @@ function unregisterShortcuts() {
 	globalShortcut.unregister('Right');
 	globalShortcut.unregister('CommandOrControl+[');
 	globalShortcut.unregister('CommandOrControl+]');
+	globalShortcut.unregister('CommandOrControl+Backspace');
 }
 
 function createMenu() {
@@ -224,7 +231,7 @@ function createMenu() {
 				},
 				{
 					label: 'Delete',
-					accelerator: 'CmdOrCtrl+Delete',
+					accelerator: 'CmdOrCtrl+Backspace',
 					click() {
 						// it sends an event to the React App to get the information about the current file
 						win.webContents.send('Delete');
