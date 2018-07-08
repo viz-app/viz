@@ -274,7 +274,7 @@ function createWindow() {
 
 	// Automatically open the DevTools on start.
 	// XXX uncomment if necessary
-	win.webContents.openDevTools();
+	// win.webContents.openDevTools();
 
 	// Emitted when the window is closed.
 	win.on('closed', () => {
