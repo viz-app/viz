@@ -1,6 +1,6 @@
 {
 	"name": "viz",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"private": true,
 	"author": "Fabien Allanic & Maxime Burlat",
 	"main": "public/start-electron.js",
