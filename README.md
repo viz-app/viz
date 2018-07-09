@@ -1,6 +1,6 @@
 # Viz
 
-Simple cross platform image viewer (MacOS, Linux, Windows).<br>
+Aspirational cross platform image viewer (MacOS, Linux, Windows).<br>
 *MacOS only as of 1.0.0*
 
 ## Motivations
