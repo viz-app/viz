@@ -1,6 +1,6 @@
 # Viz
 
-Aspirational cross platform image viewer (MacOS, Linux, Windows).<br>
+Aspirational cross platform image viewer (MacOS, Linux, Windows) based on [Electron](https://electron.atom.io/).<br>
 *MacOS only as of 1.0.0*
 
 ## Motivations
